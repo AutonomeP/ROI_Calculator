@@ -17,11 +17,11 @@ interface LiveResultPanelProps {
 export default function LiveResultPanel({ inputs, calculations }: LiveResultPanelProps) {
   const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
-  const [roiView, setRoiView] = useState<RoiView>(inputs.solutionMode === 'automation' ? 'sixMonths' : 'quarter');
+  const [roiView, setRoiView] = useState<RoiView>(inputs.solutionMode === 'automation' ? 'sixMonths' : 'oneYear');
   const [roiBeforeCostCollapsed, setRoiBeforeCostCollapsed] = useState(true);
 
   useEffect(() => {
-    setRoiView(inputs.solutionMode === 'automation' ? 'sixMonths' : 'quarter');
+    setRoiView(inputs.solutionMode === 'automation' ? 'sixMonths' : 'oneYear');
   }, [inputs.solutionMode]);
 
   const handleDownload = () => {
