@@ -104,41 +104,61 @@ export function calculatePlatformCost(
   };
 }
 
+// Helper function to get VM based on complexity
+export function getVMByComplexity(complexity: Complexity): number {
+  const vmMap: Record<Complexity, number> = {
+    simple: 1.20,
+    moderate: 1.35,
+    complex: 1.50,
+  };
+  return vmMap[complexity] || 1.35;
+}
+
+// Helper function to get percentAutomated default based on complexity
+export function getPercentAutomatedByComplexity(complexity: Complexity): number {
+  const percentMap: Record<Complexity, number> = {
+    simple: 0.25,   // 25%
+    moderate: 0.40, // 40%
+    complex: 0.50,  // 50%
+  };
+  return percentMap[complexity] || 0.40;
+}
+
+// Helper function to get error reduction default based on complexity
+export function getErrorReductionByComplexity(complexity: Complexity): number {
+  const errorMap: Record<Complexity, number> = {
+    simple: 0.40,   // 40%
+    moderate: 0.50, // 50%
+    complex: 0.60,  // 60%
+  };
+  return errorMap[complexity] || 0.50;
+}
+
 export function calculateROI(inputs: ROIInputs): ROICalculations {
   const tOld = Math.max(inputs.tOldMinutes || 0, 1);
 
-  // NEW: Calculate time saved using percentAutomated and realization factor
-  const percentAutomated = inputs.percentAutomated > 0 ? inputs.percentAutomated : 0.25;
+  // STEP 1: Determine percentAutomated based on complexity (or override)
+  const percentAutomated = inputs.percentAutomated > 0
+    ? inputs.percentAutomated
+    : getPercentAutomatedByComplexity(inputs.complexity);
+
   const realizationFactor = 0.85;
   const timeSavedPerRunMinutes = tOld * percentAutomated * realizationFactor;
   const tNew = Math.max(tOld - timeSavedPerRunMinutes, 0.5);
 
-  // NEW: Use user-specified velocity multiplier with defaults
-  let vm = inputs.velocityMultiplier;
-  if (!vm || vm <= 0) {
-    // Default based on mode
-    vm = inputs.solutionMode === 'automation' ? 1.2 : 1.5;
-  }
-  // Enforce mode-specific constraints
-  if (inputs.solutionMode === 'automation') {
-    vm = Math.max(1.0, Math.min(vm, 1.6));
-  } else {
-    vm = Math.max(1.2, Math.min(vm, 2.0));
-  }
-
+  // STEP 2: Compute time savings (MS part 1)
   const totalHoursSaved = (timeSavedPerRunMinutes * (inputs.runsPerMonth || 0)) / 60;
   const msFromTS = totalHoursSaved * (inputs.hourlyRate || 0);
 
-  // NEW: Structured error savings model
-  const defaultErrorReduction = inputs.solutionMode === 'automation' ? 0.40 : 0.70;
-  let errorReductionPercent = inputs.errorReductionPercent > 0 ? inputs.errorReductionPercent : defaultErrorReduction;
-  errorReductionPercent = Math.max(0, Math.min(errorReductionPercent, 1));
+  // STEP 3: Compute error savings (MS part 2)
+  const errorReductionPercent = inputs.errorReductionPercent > 0
+    ? inputs.errorReductionPercent
+    : getErrorReductionByComplexity(inputs.complexity);
 
   let errorSavings: number;
   if (inputs.baselineErrorCostMonthly > 0) {
     errorSavings = inputs.baselineErrorCostMonthly * errorReductionPercent;
   } else {
-    // Fallback to old method if no baseline provided
     const errorFactor = errorSavingsFactorByComplexity[inputs.complexity] || 0;
     const suggestedErrorSavings = msFromTS * errorFactor;
     errorSavings = (inputs.errorSavings && inputs.errorSavings > 0)
@@ -146,30 +166,48 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
       : suggestedErrorSavings;
   }
 
-  const msOther = errorSavings + (inputs.toolSavings || 0);
+  // STEP 4: Compute tool savings (MS part 3)
+  const toolSavings = inputs.toolSavings || 0;
+
+  // STEP 5: Sum MS = total direct savings
+  const msOther = errorSavings + toolSavings;
   const msTotal = msFromTS + msOther;
 
-  const suggestedOC = msFromTS * 0.5;
-  const complexityRevenueMultiplier = revenueMultiplierByComplexity[inputs.complexity] || 1;
-  const suggestedRG = suggestedOC * (complexityRevenueMultiplier - 1);
+  // STEP 6: Determine opportunity & revenue defaults (unless overridden)
+  const suggestedOC = msTotal * 0.15;  // 15% of total direct savings
+  const suggestedRG = msTotal * 0.10;  // 10% of total direct savings
   const suggestedErrorSavings = msFromTS * (errorSavingsFactorByComplexity[inputs.complexity] || 0);
 
   const oc = (inputs.opportunityValue && inputs.opportunityValue > 0) ? inputs.opportunityValue : suggestedOC;
   const rg = (inputs.revenueGenerated && inputs.revenueGenerated > 0) ? inputs.revenueGenerated : suggestedRG;
 
+  // STEP 7: Compute baseGrowth = OC + RG
+  const baseGrowth = oc + rg;
+
+  // STEP 8: Apply VM based on complexity (or mode)
+  const vm = inputs.velocityMultiplier > 0
+    ? inputs.velocityMultiplier
+    : getVMByComplexity(inputs.complexity);
+
+  // STEP 9: Compute growthMonthly = baseGrowth * VM
+  const growthMonthly = baseGrowth * vm;
+
+  // STEP 10: Compute monthlyLeveragedValue = (MS + growthMonthly) * WLSmultiplier
   const wlsRaw = inputs.wls || 0;
   const wls = Math.min(Math.max(wlsRaw, 1), 5);
   const wlsMultiplier = getWLSMultiplier(wls);
 
-  // Growth now uses user-specified velocity multiplier
-  const growthMonthly = (oc + rg) * vm;
-
   const baseMonthlyValue = msTotal + growthMonthly;
-  const leveragedMonthly = baseMonthlyValue * wlsMultiplier;
+  let monthlyLeveragedValue = baseMonthlyValue * wlsMultiplier;
 
-  // Remove agentic multiplier - it's only in platform cost now
-  let monthlyLeveragedValue = leveragedMonthly;
+  // STEP 11: If agenticMode: monthlyLeveragedValue *= 2.1107
+  if (inputs.solutionMode === 'agentic') {
+    monthlyLeveragedValue *= AGENTIC_MULTIPLIER;
+  }
 
+  // STEP 12: Compute baselineAnnual
+  // STEP 13: Compute maxCost from payback caps
+  // STEP 14: platformCost = min(baselineAnnual, maxCost)
   const {
     suggestedAnnualCost,
     suggestedMonthlyEquivalent,
@@ -179,15 +217,12 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
 
   const roiBeforeCost = monthlyLeveragedValue;
 
-  // NEW: Include monthlyRunCost in calculations
+  // Include monthlyRunCost (OPEX) in calculations
   const monthlyRunCost = inputs.monthlyRunCost || 0;
-  const netMonthlyAfterRunCost = monthlyLeveragedValue - platformMonthlyUsed - monthlyRunCost;
-  const totalRoi = netMonthlyAfterRunCost;
 
-  const roiPercentMonthly = platformMonthlyUsed > 0
-    ? (totalRoi / platformMonthlyUsed) * 100
-    : 0;
-
+  // STEP 15: Compute ROI quarter/6-month/annual net:
+  //   grossX = monthlyLeveragedValue * X
+  //   netX = grossX - platformCost - opex*X
   const grossQuarter = monthlyLeveragedValue * 3;
   const gross6m = monthlyLeveragedValue * 6;
   const gross1y = monthlyLeveragedValue * 12;
@@ -208,6 +243,15 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
     ? (roi1yNet / platformAnnualUsed) * 100
     : 0;
 
+  // Net monthly after platform cost and run cost
+  const netMonthlyAfterRunCost = monthlyLeveragedValue - platformMonthlyUsed - monthlyRunCost;
+  const totalRoi = netMonthlyAfterRunCost;
+
+  const roiPercentMonthly = platformMonthlyUsed > 0
+    ? (totalRoi / platformMonthlyUsed) * 100
+    : 0;
+
+  // STEP 16: Compute TTV months & quarters
   const monthsToRoi = monthlyLeveragedValue > 0
     ? platformAnnualUsed / monthlyLeveragedValue
     : 0;

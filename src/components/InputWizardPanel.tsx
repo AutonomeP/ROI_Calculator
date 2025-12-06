@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ROIInputs, ROIInputStrings, ROICalculations, Complexity } from '../types/roi';
 import FormSection from './FormSection';
 import FormInput from './FormInput';
@@ -5,6 +6,7 @@ import ComplexitySelector from './ComplexitySelector';
 import LeverageSlider from './LeverageSlider';
 import CollapsibleInput from './CollapsibleInput';
 import { formatCurrency } from '../utils/formatting';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface InputWizardPanelProps {
   inputs: ROIInputs;
@@ -14,6 +16,9 @@ interface InputWizardPanelProps {
 }
 
 export default function InputWizardPanel({ inputs, inputStrings, calculations, onChange }: InputWizardPanelProps) {
+  const { theme } = useTheme();
+  const [platformCostOverrideEnabled, setPlatformCostOverrideEnabled] = useState(false);
+
   const handleChange = (field: keyof ROIInputs) => (value: string) => {
     onChange(field, value);
   };
@@ -29,8 +34,8 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
     : `Suggested: ${formatCurrency(calculations.suggestedPlatformAnnual, 2)} total (${formatCurrency(calculations.suggestedPlatformMonthly, 2)}/month over 12 months)`;
 
   const errorSavingsHelperText = `Auto-estimated: ${formatCurrency(calculations.suggestedErrorSavings, 2)}/month (based on complexity)`;
-  const revenueGeneratedHelperText = `Suggested: ${formatCurrency(calculations.suggestedRG, 2)}/month (based on complexity and opportunity value)`;
-  const opportunityValueHelperText = `Suggested: ${formatCurrency(calculations.suggestedOC, 2)}/month (based on time savings)`;
+  const revenueGeneratedHelperText = `Suggested: ${formatCurrency(calculations.suggestedRG, 2)}/month (10% of direct savings)`;
+  const opportunityValueHelperText = `Suggested: ${formatCurrency(calculations.suggestedOC, 2)}/month (15% of direct savings)`;
 
   return (
     <div className="space-y-6">
@@ -95,34 +100,55 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
           value={inputStrings.wls}
           onChange={handleChange('wls')}
         />
-        <FormInput
-          label="Velocity Multiplier (VM)"
-          type="number"
-          value={inputStrings.velocityMultiplier}
-          onChange={handleChange('velocityMultiplier')}
-          placeholder={inputs.solutionMode === 'automation' ? 'e.g., 1.2' : 'e.g., 1.5'}
-          helperText={
-            inputs.solutionMode === 'automation'
-              ? 'Automation range: 1.0-1.6 (recommended: 1.1-1.3). Default: 1.2'
-              : 'Agentic range: 1.2-2.0 (recommended: 1.4-1.7). Default: 1.5'
-          }
-        />
-        <CollapsibleInput
-          label="Platform Cost"
-          defaultCollapsed={true}
-        >
-          <FormInput
-            label="Platform Cost (one-time total)"
-            type="number"
-            value={inputStrings.platformCost}
-            onChange={handleChange('platformCost')}
-            placeholder="Optional - leave blank for suggestion"
-            helperText={platformCostHelperText}
-          />
-        </CollapsibleInput>
+        <div className="mb-5">
+          <label className={`block text-xs uppercase tracking-widest font-semibold mb-3 ${
+            'text-gray-400'
+          }`}>
+            Velocity Multiplier (VM)
+          </label>
+          <div className="p-4 rounded-lg border border-white/10 bg-black/20">
+            <div className="text-3xl font-black text-roi-orange mb-2">
+              {calculations.vm.toFixed(2)}×
+            </div>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Auto-calculated based on complexity: Simple (1.20×), Moderate (1.35×), Complex (1.50×)
+            </p>
+          </div>
+        </div>
+        <div className="mb-5">
+          <label className={`block text-xs uppercase tracking-widest font-semibold mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+            Platform Build Cost
+          </label>
+          {!platformCostOverrideEnabled ? (
+            <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'border-white/10 bg-black/20' : 'border-black/10 bg-white/40'}`}>
+              <div className={`text-2xl font-black mb-2 ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+                {formatCurrency(calculations.suggestedPlatformAnnual)}
+              </div>
+              <p className={`text-xs mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+                Suggested one-time build cost ({formatCurrency(calculations.suggestedPlatformMonthly, 2)}/month over 12 months)
+              </p>
+              <button
+                type="button"
+                onClick={() => setPlatformCostOverrideEnabled(true)}
+                className="text-xs text-roi-orange hover:underline font-semibold"
+              >
+                Override build cost →
+              </button>
+            </div>
+          ) : (
+            <FormInput
+              label="Platform Cost (one-time total)"
+              type="number"
+              value={inputStrings.platformCost}
+              onChange={handleChange('platformCost')}
+              placeholder="Enter custom build cost"
+              helperText={platformCostHelperText}
+            />
+          )}
+        </div>
         <CollapsibleInput
           label="Operating Costs (OPEX)"
-          defaultCollapsed={true}
+          defaultCollapsed={false}
         >
           <FormInput
             label="Monthly Run Cost ($/month)"
@@ -137,36 +163,38 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
 
       <FormSection
         title="Direct Savings"
-        helperText="Additional monthly savings beyond time"
+        helperText="We auto-estimate error reduction based on workflow complexity. Override any value if needed."
         collapsible={true}
-        defaultCollapsed={true}
+        defaultCollapsed={false}
       >
-        <FormInput
-          label="Baseline Monthly Error Cost ($/month)"
-          type="number"
-          value={inputStrings.baselineErrorCostMonthly}
-          onChange={handleChange('baselineErrorCostMonthly')}
-          placeholder="e.g., 500"
-          helperText="Current monthly cost of errors before automation"
-        />
-        <FormInput
-          label="Expected Error Reduction (%)"
-          type="number"
-          value={inputStrings.errorReductionPercent}
-          onChange={handleChange('errorReductionPercent')}
-          placeholder={inputs.solutionMode === 'automation' ? 'e.g., 40' : 'e.g., 70'}
-          helperText={
-            inputs.solutionMode === 'automation'
-              ? 'Simple automation: 30-60% • Default: 40%'
-              : 'Agentic systems: 50-90% • Default: 70%'
-          }
-        />
+        <CollapsibleInput
+          label="Error Savings (Customize)"
+          defaultCollapsed={true}
+        >
+          <FormInput
+            label="Baseline Monthly Error Cost ($/month)"
+            type="number"
+            value={inputStrings.baselineErrorCostMonthly}
+            onChange={handleChange('baselineErrorCostMonthly')}
+            placeholder="e.g., 500"
+            helperText="Current monthly cost of errors before automation"
+          />
+          <FormInput
+            label="Expected Error Reduction (%)"
+            type="number"
+            value={inputStrings.errorReductionPercent}
+            onChange={handleChange('errorReductionPercent')}
+            placeholder={`Auto: ${(calculations.calculatedErrorReductionPercent * 100).toFixed(0)}%`}
+            helperText={`Defaults: Simple (40%), Moderate (50%), Complex (60%)`}
+          />
+        </CollapsibleInput>
         <FormInput
           label="Savings from Tools/Contractors ($/month)"
           type="number"
           value={inputStrings.toolSavings}
           onChange={handleChange('toolSavings')}
           placeholder="e.g., 200"
+          helperText="Monthly savings from tools or services you'll no longer need"
         />
       </FormSection>
 

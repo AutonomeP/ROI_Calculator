@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 
 interface CollapsibleInputProps {
   label: string;
@@ -12,6 +13,7 @@ export default function CollapsibleInput({
   children,
   defaultCollapsed = false
 }: CollapsibleInputProps) {
+  const { theme } = useTheme();
   const [isCollapsed, setIsCollapsed] = useState(defaultCollapsed);
 
   const toggleCollapse = () => {
@@ -25,13 +27,19 @@ export default function CollapsibleInput({
         onClick={toggleCollapse}
       >
         <h4 className={`text-base font-semibold transition-colors ${
-          isCollapsed ? 'text-roi-orange' : 'text-white'
+          isCollapsed
+            ? 'text-roi-orange'
+            : theme === 'dark' ? 'text-white' : 'text-roi-text-primary'
         }`}>
           {label}
         </h4>
         <button
           type="button"
-          className="text-gray-400 hover:text-roi-orange transition-colors p-1"
+          className={`transition-colors p-1 ${
+            theme === 'dark'
+              ? 'text-gray-400 hover:text-roi-orange'
+              : 'text-roi-text-secondary hover:text-roi-orange'
+          }`}
           aria-label={isCollapsed ? 'Expand' : 'Collapse'}
         >
           {isCollapsed ? <ChevronDown size={20} /> : <ChevronUp size={20} />}

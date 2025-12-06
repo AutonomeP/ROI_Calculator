@@ -6,11 +6,11 @@ interface LeverageSliderProps {
 }
 
 const leverageOptions = [
-  { value: '1', label: 'Minimal', description: 'Nice-to-have' },
-  { value: '2', label: 'Low', description: 'Some impact' },
-  { value: '3', label: 'Moderate', description: 'Important' },
-  { value: '4', label: 'High', description: 'Strong impact' },
-  { value: '5', label: 'Critical', description: 'Must-have' },
+  { value: '1', label: 'Minimal', multiplier: '1.0×' },
+  { value: '2', label: 'Low', multiplier: '1.5×' },
+  { value: '3', label: 'Moderate', multiplier: '2.0×' },
+  { value: '4', label: 'High', multiplier: '2.5×' },
+  { value: '5', label: 'Critical', multiplier: '3.0×' },
 ];
 
 export default function LeverageSlider({ value, onChange }: LeverageSliderProps) {
@@ -48,11 +48,11 @@ export default function LeverageSlider({ value, onChange }: LeverageSliderProps)
       </div>
       <div className={`p-3 rounded-lg border ${theme === 'dark' ? 'bg-black/20 border-white/10' : 'bg-white/40 border-black/10'}`}>
         <p className={`text-xs leading-relaxed text-center ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
-          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>1</span> = Minimal (nice-to-have) •
-          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 2</span> = Low (some impact) •
-          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 3</span> = Moderate (important) •
-          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 4</span> = High (strong impact) •
-          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 5</span> = Critical (must-have)
+          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>1</span> = 1.0× Minimal •
+          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 2</span> = 1.5× Low •
+          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 3</span> = 2.0× Moderate •
+          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 4</span> = 2.5× High •
+          <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 5</span> = 3.0× Critical
         </p>
       </div>
     </div>

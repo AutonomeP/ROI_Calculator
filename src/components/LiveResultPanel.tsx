@@ -17,11 +17,13 @@ interface LiveResultPanelProps {
 export default function LiveResultPanel({ inputs, calculations }: LiveResultPanelProps) {
   const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
-  const [roiView, setRoiView] = useState<RoiView>(inputs.solutionMode === 'automation' ? 'sixMonths' : 'oneYear');
+  const [roiView, setRoiView] = useState<RoiView>('quarter');
   const [roiBeforeCostCollapsed, setRoiBeforeCostCollapsed] = useState(true);
 
   useEffect(() => {
-    setRoiView(inputs.solutionMode === 'automation' ? 'sixMonths' : 'oneYear');
+    // Keep Quarter as default, but suggest different tabs based on mode
+    // User can still change tabs manually
+    setRoiView('quarter');
   }, [inputs.solutionMode]);
 
   const handleDownload = () => {
@@ -48,24 +50,24 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
     case 'quarter':
       displayedRoiValue = calculations.roiQuarterNet;
       displayedRoiLabel = 'Total ROI (Quarter)';
-      displayedRoiCaption = 'Projected ROI over selected period (after one-time build cost)';
+      displayedRoiCaption = 'Projected ROI over 3 months (after one-time build cost and monthly OPEX)';
       displayedRoiPercent = calculations.roiQuarterPercent;
       displayedRoiPercentCaption = 'Return in first quarter vs one-time build cost';
       break;
-    case 'oneYear':
-      displayedRoiValue = calculations.roi1yNet;
-      displayedRoiLabel = 'Total ROI (12 months)';
-      displayedRoiCaption = 'Projected ROI over selected period (after one-time build cost)';
-      displayedRoiPercent = calculations.roi1yPercent;
-      displayedRoiPercentCaption = 'Return over 12 months vs one-time build cost';
-      break;
     case 'sixMonths':
-    default:
       displayedRoiValue = calculations.roi6mNet;
       displayedRoiLabel = 'Total ROI (6 months)';
-      displayedRoiCaption = 'Projected ROI over selected period (after one-time build cost)';
+      displayedRoiCaption = 'Projected ROI over 6 months (after one-time build cost and monthly OPEX)';
       displayedRoiPercent = calculations.roi6mPercent;
       displayedRoiPercentCaption = 'Return over 6 months vs one-time build cost';
+      break;
+    case 'oneYear':
+    default:
+      displayedRoiValue = calculations.roi1yNet;
+      displayedRoiLabel = 'Total ROI (12 months)';
+      displayedRoiCaption = 'Projected ROI over 12 months (after one-time build cost and monthly OPEX)';
+      displayedRoiPercent = calculations.roi1yPercent;
+      displayedRoiPercentCaption = 'Return over 12 months vs one-time build cost';
       break;
   }
 

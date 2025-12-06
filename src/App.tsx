@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { ROIInputs, ROIInputStrings, SolutionMode } from './types/roi';
-import { calculateROI } from './utils/calculations';
+import { ROIInputs, ROIInputStrings, SolutionMode, Complexity } from './types/roi';
+import { calculateROI, getVMByComplexity, getPercentAutomatedByComplexity, getErrorReductionByComplexity } from './utils/calculations';
 import { useTheme } from './contexts/ThemeContext';
 import InputWizardPanel from './components/InputWizardPanel';
 import LiveResultPanel from './components/LiveResultPanel';
@@ -52,8 +52,30 @@ function App() {
   const calculations = useMemo(() => calculateROI(inputs), [inputs]);
 
   const handleInputChange = (field: keyof ROIInputs, value: string | number) => {
-    if (field === 'processName' || field === 'complexity') {
+    if (field === 'processName') {
       setInputs(prev => ({ ...prev, [field]: value }));
+    } else if (field === 'complexity') {
+      // When complexity changes, auto-populate VM, percentAutomated, and errorReduction
+      const complexityValue = value as Complexity;
+      const newVM = getVMByComplexity(complexityValue);
+      const newPercentAutomated = getPercentAutomatedByComplexity(complexityValue);
+      const newErrorReduction = getErrorReductionByComplexity(complexityValue);
+
+      setInputs(prev => ({
+        ...prev,
+        complexity: complexityValue,
+        velocityMultiplier: newVM,
+        percentAutomated: newPercentAutomated,
+        errorReductionPercent: newErrorReduction,
+      }));
+
+      // Update string values for display
+      setInputStrings(prev => ({
+        ...prev,
+        velocityMultiplier: newVM.toFixed(2),
+        percentAutomated: (newPercentAutomated * 100).toFixed(0),
+        errorReductionPercent: (newErrorReduction * 100).toFixed(0),
+      }));
     } else {
       const stringValue = typeof value === 'string' ? value : value.toString();
       setInputStrings(prev => ({ ...prev, [field]: stringValue }));
