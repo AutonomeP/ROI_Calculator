@@ -1,5 +1,5 @@
 import { useState, FormEvent } from 'react';
-import { Mail, CheckCircle } from 'lucide-react';
+import { Mail, CheckCircle, Shield } from 'lucide-react';
 import { supabase } from '../lib/supabaseClient';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -40,82 +40,98 @@ export default function EmailGateModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-      <div className="absolute inset-0 bg-black/98 backdrop-blur-md"></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-fadeIn">
+      <div className={`absolute inset-0 backdrop-blur-md ${theme === 'dark' ? 'bg-premium-gradient' : 'bg-premium-gradient-light'}`}>
+        <div className="absolute top-20 left-20 w-96 h-96 bg-orange-glow opacity-30 blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-glow opacity-20 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+      </div>
 
-      <div className={`relative z-10 max-w-md w-full p-8 md:p-10 rounded-3xl ${theme === 'dark' ? 'bg-roi-black/98 border border-white/20' : 'bg-white border border-black/10'} shadow-[0_20px_60px_rgba(0,0,0,0.4)]`}>
+      <div className={`relative z-10 max-w-md w-full p-10 md:p-12 rounded-3xl glass-card ${theme === 'dark' ? 'shadow-premium' : 'shadow-premium-light'} animate-scaleIn`}>
         {!emailSent ? (
           <>
-            <div className="flex justify-center mb-6">
-              <div className="p-4 bg-roi-orange/10 rounded-2xl">
-                <Mail size={40} className="text-roi-orange" strokeWidth={1.5} />
+            <div className="flex justify-center mb-8 fade-in stagger-1">
+              <div className="metric-card-orange p-6 relative overflow-visible group">
+                <div className="absolute inset-0 bg-orange-glow opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
+                <Mail size={48} className="text-roi-orange relative z-10 transition-transform duration-300 group-hover:scale-110" strokeWidth={1.5} />
               </div>
             </div>
 
-            <div className="text-center mb-8">
-              <h2 className={`text-3xl font-black mb-3 leading-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+            <div className="text-center mb-10 fade-in stagger-2">
+              <h2 className={`text-4xl md:text-5xl font-black mb-4 leading-tight tracking-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
                 Access ROI Calculator
               </h2>
-              <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+              <p className={`text-base leading-relaxed max-w-sm mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
                 Enter your email to receive a secure access link. Once verified, you can return on this device without re-verifying.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-6 fade-in stagger-3">
               <div>
+                <label className={`block text-[10px] uppercase tracking-[0.15em] font-bold mb-3 ${theme === 'dark' ? 'text-gray-500' : 'text-roi-text-secondary/60'}`}>
+                  Email Address
+                </label>
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="you@company.com"
-                  className={`w-full rounded-xl px-4 py-3.5 text-sm transition-all focus:outline-none focus:ring-2 focus:ring-roi-orange ${
-                    theme === 'dark'
-                      ? 'bg-white/5 border border-white/10 text-white placeholder-gray-500'
-                      : 'bg-white border border-black/10 text-roi-text-primary placeholder-gray-400'
-                  }`}
+                  className="glass-input w-full px-5 py-4 text-base font-medium"
                   disabled={isSubmitting}
                 />
               </div>
 
               {error && (
-                <div className="text-sm text-red-500 text-center">
-                  {error}
+                <div className={`glass-card p-4 border-2 ${theme === 'dark' ? 'border-red-500/50 bg-red-500/10' : 'border-red-500/30 bg-red-500/5'} animate-shake`}>
+                  <p className="text-sm text-red-500 font-medium text-center">
+                    {error}
+                  </p>
                 </div>
               )}
 
               <button
                 type="submit"
                 disabled={isSubmitting || !email}
-                className="w-full rounded-xl bg-roi-orange px-6 py-3.5 text-sm font-bold text-white hover:bg-roi-orange/90 transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full rounded-xl bg-roi-orange px-8 py-4 text-base font-bold uppercase tracking-wider text-white hover:bg-roi-orange/90 transition-all duration-300 shadow-lg hover:shadow-orange-glow hover:scale-[1.02] hover:translate-y-[-2px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:translate-y-0 relative overflow-hidden group"
               >
-                {isSubmitting ? 'Sending...' : 'Send Access Link'}
+                <span className="relative z-10">
+                  {isSubmitting ? 'Sending...' : 'Send Access Link'}
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-roi-orange to-roi-orange-glow opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             </form>
 
-            <p className={`text-xs text-center mt-6 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
-              By continuing, you agree to receive a one-time email verification link.
-            </p>
+            <div className={`flex items-center justify-center gap-2 mt-8 fade-in stagger-4 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
+              <Shield size={14} strokeWidth={2} />
+              <p className="text-xs font-medium">
+                Secure verification • No spam, ever
+              </p>
+            </div>
           </>
         ) : (
-          <>
-            <div className="flex justify-center mb-6">
-              <div className="p-4 bg-green-500/10 rounded-2xl">
-                <CheckCircle size={40} className="text-green-500" strokeWidth={1.5} />
+          <div className="fade-in">
+            <div className="flex justify-center mb-8 fade-in stagger-1">
+              <div className={`metric-card p-6 relative overflow-visible ${theme === 'dark' ? 'bg-green-500/20 border-green-500/50' : 'bg-green-500/10 border-green-500/30'}`}>
+                <div className={`absolute inset-0 blur-2xl opacity-50 ${theme === 'dark' ? 'bg-green-500/30' : 'bg-green-500/20'}`}></div>
+                <CheckCircle size={48} className="text-green-500 relative z-10 animate-scaleIn" strokeWidth={2} />
               </div>
             </div>
 
-            <div className="text-center">
-              <h2 className={`text-3xl font-black mb-3 leading-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+            <div className="text-center fade-in stagger-2">
+              <h2 className={`text-4xl md:text-5xl font-black mb-6 leading-tight tracking-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
                 Check Your Email
               </h2>
-              <p className={`text-sm leading-relaxed mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+              <p className={`text-base leading-relaxed mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
                 We've sent a verification link to:
               </p>
-              <p className={`text-base font-semibold mb-6 ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
-                {email}
-              </p>
-              <p className={`text-sm leading-relaxed ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+
+              <div className={`glass-card p-5 mb-6 border-2 ${theme === 'dark' ? 'border-roi-orange/30' : 'border-roi-orange/20'}`}>
+                <p className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+                  {email}
+                </p>
+              </div>
+
+              <p className={`text-sm leading-relaxed mb-8 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
                 Click the link in your email to access the calculator. This window will automatically update once you verify.
               </p>
             </div>
@@ -126,15 +142,15 @@ export default function EmailGateModal() {
                 setEmail('');
                 setError(null);
               }}
-              className={`w-full mt-6 rounded-xl px-6 py-3 text-sm font-medium transition-all ${
+              className={`glass-card w-full mt-6 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-300 hover:scale-[1.02] ${
                 theme === 'dark'
-                  ? 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
-                  : 'bg-gray-100 text-roi-text-primary hover:bg-gray-200'
+                  ? 'text-white hover:border-white/30'
+                  : 'text-roi-text-primary hover:border-black/20'
               }`}
             >
               Use Different Email
             </button>
-          </>
+          </div>
         )}
       </div>
     </div>
