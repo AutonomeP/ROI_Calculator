@@ -47,7 +47,7 @@ export default function LeverageSlider({ value, onChange }: LeverageSliderProps)
         ))}
       </div>
       <div className={`p-3 rounded-lg border ${theme === 'dark' ? 'bg-black/20 border-white/10' : 'bg-white/40 border-black/10'}`}>
-        <p className={`text-xs leading-relaxed ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+        <p className={`text-xs leading-relaxed text-center ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
           <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>1</span> = Minimal (nice-to-have) •
           <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 2</span> = Low (some impact) •
           <span className={`font-semibold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}> 3</span> = Moderate (important) •
