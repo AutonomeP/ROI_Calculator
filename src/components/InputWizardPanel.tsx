@@ -115,10 +115,10 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
             </p>
           </div>
         </div>
-        <div className="mb-5">
-          <label className={`block text-xs uppercase tracking-widest font-semibold mb-3 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
-            Platform Build Cost
-          </label>
+        <CollapsibleInput
+          label="Platform Build Cost"
+          defaultCollapsed={true}
+        >
           {!platformCostOverrideEnabled ? (
             <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'border-white/10 bg-black/20' : 'border-black/10 bg-white/40'}`}>
               <div className={`text-2xl font-black mb-2 ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
@@ -145,7 +145,7 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
               helperText={platformCostHelperText}
             />
           )}
-        </div>
+        </CollapsibleInput>
         <CollapsibleInput
           label="Operating Costs (OPEX)"
           defaultCollapsed={false}
