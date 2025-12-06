@@ -25,6 +25,11 @@ function App() {
     platformCost: 0,
     complexity: 'moderate',
     solutionMode: 'automation',
+    percentAutomated: 0.25,
+    baselineErrorCostMonthly: 0,
+    errorReductionPercent: 0,
+    velocityMultiplier: 0,
+    monthlyRunCost: 0,
   });
 
   const [inputStrings, setInputStrings] = useState<ROIInputStrings>({
@@ -37,6 +42,11 @@ function App() {
     opportunityValue: '',
     wls: '3',
     platformCost: '',
+    percentAutomated: '25',
+    baselineErrorCostMonthly: '',
+    errorReductionPercent: '',
+    velocityMultiplier: '',
+    monthlyRunCost: '',
   });
 
   const calculations = useMemo(() => calculateROI(inputs), [inputs]);
@@ -49,7 +59,13 @@ function App() {
       setInputStrings(prev => ({ ...prev, [field]: stringValue }));
 
       const sanitized = stringValue.replace(/[^0-9.]/g, '');
-      const numericValue = parseFloat(sanitized) || 0;
+      let numericValue = parseFloat(sanitized) || 0;
+
+      // Convert percentage fields (0-100) to decimal (0-1)
+      if (field === 'percentAutomated' || field === 'errorReductionPercent') {
+        numericValue = numericValue / 100;
+      }
+
       setInputs(prev => ({ ...prev, [field]: numericValue }));
     }
   };

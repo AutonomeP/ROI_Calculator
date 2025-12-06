@@ -65,6 +65,14 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
           onChange={handleChange('tOldMinutes')}
           placeholder="e.g., 30"
         />
+        <FormInput
+          label="% of Task That Can Be Automated"
+          type="number"
+          value={inputStrings.percentAutomated}
+          onChange={handleChange('percentAutomated')}
+          placeholder="e.g., 25"
+          helperText={`Recommended ranges: Simple automation (15-30%) • Complex workflows (25-50%) • Agentic systems (20-40%). Default: 25%`}
+        />
         <ComplexitySelector
           value={inputs.complexity}
           onChange={handleComplexityChange}
@@ -87,6 +95,18 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
           value={inputStrings.wls}
           onChange={handleChange('wls')}
         />
+        <FormInput
+          label="Velocity Multiplier (VM)"
+          type="number"
+          value={inputStrings.velocityMultiplier}
+          onChange={handleChange('velocityMultiplier')}
+          placeholder={inputs.solutionMode === 'automation' ? 'e.g., 1.2' : 'e.g., 1.5'}
+          helperText={
+            inputs.solutionMode === 'automation'
+              ? 'Automation range: 1.0-1.6 (recommended: 1.1-1.3). Default: 1.2'
+              : 'Agentic range: 1.2-2.0 (recommended: 1.4-1.7). Default: 1.5'
+          }
+        />
         <CollapsibleInput
           label="Platform Cost"
           defaultCollapsed={true}
@@ -100,6 +120,19 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
             helperText={platformCostHelperText}
           />
         </CollapsibleInput>
+        <CollapsibleInput
+          label="Operating Costs (OPEX)"
+          defaultCollapsed={true}
+        >
+          <FormInput
+            label="Monthly Run Cost ($/month)"
+            type="number"
+            value={inputStrings.monthlyRunCost}
+            onChange={handleChange('monthlyRunCost')}
+            placeholder="e.g., 50"
+            helperText="LLM API costs, hosting, and ongoing maintenance expenses"
+          />
+        </CollapsibleInput>
       </FormSection>
 
       <FormSection
@@ -109,12 +142,24 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
         defaultCollapsed={true}
       >
         <FormInput
-          label="Savings from Reduced Errors ($/month)"
+          label="Baseline Monthly Error Cost ($/month)"
           type="number"
-          value={inputStrings.errorSavings}
-          onChange={handleChange('errorSavings')}
-          placeholder="Optional - leave blank for auto-estimate"
-          helperText={errorSavingsHelperText}
+          value={inputStrings.baselineErrorCostMonthly}
+          onChange={handleChange('baselineErrorCostMonthly')}
+          placeholder="e.g., 500"
+          helperText="Current monthly cost of errors before automation"
+        />
+        <FormInput
+          label="Expected Error Reduction (%)"
+          type="number"
+          value={inputStrings.errorReductionPercent}
+          onChange={handleChange('errorReductionPercent')}
+          placeholder={inputs.solutionMode === 'automation' ? 'e.g., 40' : 'e.g., 70'}
+          helperText={
+            inputs.solutionMode === 'automation'
+              ? 'Simple automation: 30-60% • Default: 40%'
+              : 'Agentic systems: 50-90% • Default: 70%'
+          }
         />
         <FormInput
           label="Savings from Tools/Contractors ($/month)"

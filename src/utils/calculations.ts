@@ -47,14 +47,12 @@ type PlatformCostResult = {
  *                  (this should be roiBeforeCost)
  *  - userOverrideAnnual: user-entered TOTAL platform price (one-time),
  *                        or 0/undefined if not provided
- *  - solutionMode: 'automation' or 'agentic' to apply pricing multiplier
+ *  - solutionMode: 'automation' or 'agentic' to apply payback window
  *
  * Logic:
- *  - annualValue = monthlyValue * 12
- *  - baselineAnnual = annualValue * 0.1825   // 18.25%
- *  - maxAnnual = monthlyValue * 3            // ≤ 3 months to recoup
- *  - suggestedAnnualCost = min(baselineAnnual, maxAnnual)
- *  - For agentic mode: suggestedAnnualCost *= AGENTIC_MULTIPLIER (2.1107)
+ *  - baselineAnnualCost = monthlyValue * 12 * 0.20   // 20% baseline
+ *  - maxCost = monthlyValue * (automation: 3, agentic: 4)
+ *  - suggestedAnnualCost = min(baselineAnnualCost, maxCost)
  *  - suggestedMonthlyEquivalent = suggestedAnnualCost / 12
  *
  *  - If userOverrideAnnual > 0, we use that as platformAnnualUsed
@@ -80,24 +78,14 @@ export function calculatePlatformCost(
     };
   }
 
-  const annualValue = monthlyValue * 12;
+  // Baseline: 20% of annual value.
+  const baselineAnnualCost = monthlyValue * 12 * 0.20;
 
-  // Baseline: 18.25% of annual value.
-  let baselineAnnualCost = annualValue * 0.1825;
+  // Cap: recoup in ≤ 3 months (automation) or 4 months (agentic).
+  const paybackMonthsLimit = solutionMode === 'automation' ? 3 : 4;
+  const maxCost = monthlyValue * paybackMonthsLimit;
 
-  // Cap: recoup in ≤ 3 months.
-  const maxAnnualCost = monthlyValue * 3;
-  if (baselineAnnualCost > maxAnnualCost) {
-    baselineAnnualCost = maxAnnualCost;
-  }
-
-  let modeAdjustedSuggestedAnnual = baselineAnnualCost;
-
-  if (solutionMode === 'agentic') {
-    modeAdjustedSuggestedAnnual = baselineAnnualCost * AGENTIC_MULTIPLIER;
-  }
-
-  const suggestedAnnualCost = modeAdjustedSuggestedAnnual;
+  const suggestedAnnualCost = Math.min(baselineAnnualCost, maxCost);
   const suggestedMonthlyEquivalent = suggestedAnnualCost / 12;
 
   // If user typed a custom TOTAL price, honor override.
@@ -118,19 +106,45 @@ export function calculatePlatformCost(
 
 export function calculateROI(inputs: ROIInputs): ROICalculations {
   const tOld = Math.max(inputs.tOldMinutes || 0, 1);
-  const timeFactor = complexityTimeFactor[inputs.complexity] || 0;
-  const tSavedPerRun = tOld * timeFactor;
-  const tNew = Math.max(tOld - tSavedPerRun, 0.5);
-  const vm = tOld / tNew;
 
-  const totalHoursSaved = (tSavedPerRun * (inputs.runsPerMonth || 0)) / 60;
+  // NEW: Calculate time saved using percentAutomated and realization factor
+  const percentAutomated = inputs.percentAutomated > 0 ? inputs.percentAutomated : 0.25;
+  const realizationFactor = 0.85;
+  const timeSavedPerRunMinutes = tOld * percentAutomated * realizationFactor;
+  const tNew = Math.max(tOld - timeSavedPerRunMinutes, 0.5);
+
+  // NEW: Use user-specified velocity multiplier with defaults
+  let vm = inputs.velocityMultiplier;
+  if (!vm || vm <= 0) {
+    // Default based on mode
+    vm = inputs.solutionMode === 'automation' ? 1.2 : 1.5;
+  }
+  // Enforce mode-specific constraints
+  if (inputs.solutionMode === 'automation') {
+    vm = Math.max(1.0, Math.min(vm, 1.6));
+  } else {
+    vm = Math.max(1.2, Math.min(vm, 2.0));
+  }
+
+  const totalHoursSaved = (timeSavedPerRunMinutes * (inputs.runsPerMonth || 0)) / 60;
   const msFromTS = totalHoursSaved * (inputs.hourlyRate || 0);
 
-  const errorFactor = errorSavingsFactorByComplexity[inputs.complexity] || 0;
-  const suggestedErrorSavings = msFromTS * errorFactor;
-  const errorSavings = (inputs.errorSavings && inputs.errorSavings > 0)
-    ? inputs.errorSavings
-    : suggestedErrorSavings;
+  // NEW: Structured error savings model
+  const defaultErrorReduction = inputs.solutionMode === 'automation' ? 0.40 : 0.70;
+  let errorReductionPercent = inputs.errorReductionPercent > 0 ? inputs.errorReductionPercent : defaultErrorReduction;
+  errorReductionPercent = Math.max(0, Math.min(errorReductionPercent, 1));
+
+  let errorSavings: number;
+  if (inputs.baselineErrorCostMonthly > 0) {
+    errorSavings = inputs.baselineErrorCostMonthly * errorReductionPercent;
+  } else {
+    // Fallback to old method if no baseline provided
+    const errorFactor = errorSavingsFactorByComplexity[inputs.complexity] || 0;
+    const suggestedErrorSavings = msFromTS * errorFactor;
+    errorSavings = (inputs.errorSavings && inputs.errorSavings > 0)
+      ? inputs.errorSavings
+      : suggestedErrorSavings;
+  }
 
   const msOther = errorSavings + (inputs.toolSavings || 0);
   const msTotal = msFromTS + msOther;
@@ -138,6 +152,7 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
   const suggestedOC = msFromTS * 0.5;
   const complexityRevenueMultiplier = revenueMultiplierByComplexity[inputs.complexity] || 1;
   const suggestedRG = suggestedOC * (complexityRevenueMultiplier - 1);
+  const suggestedErrorSavings = msFromTS * (errorSavingsFactorByComplexity[inputs.complexity] || 0);
 
   const oc = (inputs.opportunityValue && inputs.opportunityValue > 0) ? inputs.opportunityValue : suggestedOC;
   const rg = (inputs.revenueGenerated && inputs.revenueGenerated > 0) ? inputs.revenueGenerated : suggestedRG;
@@ -146,18 +161,14 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
   const wls = Math.min(Math.max(wlsRaw, 1), 5);
   const wlsMultiplier = getWLSMultiplier(wls);
 
+  // Growth now uses user-specified velocity multiplier
   const growthMonthly = (oc + rg) * vm;
 
   const baseMonthlyValue = msTotal + growthMonthly;
-
   const leveragedMonthly = baseMonthlyValue * wlsMultiplier;
 
+  // Remove agentic multiplier - it's only in platform cost now
   let monthlyLeveragedValue = leveragedMonthly;
-  if (inputs.solutionMode === 'agentic') {
-    const agenticLeveraged = leveragedMonthly * AGENTIC_MULTIPLIER;
-    const maxLeveraged = baseMonthlyValue * 5;
-    monthlyLeveragedValue = Math.min(agenticLeveraged, maxLeveraged);
-  }
 
   const {
     suggestedAnnualCost,
@@ -167,7 +178,11 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
   } = calculatePlatformCost(monthlyLeveragedValue, inputs.platformCost, inputs.solutionMode);
 
   const roiBeforeCost = monthlyLeveragedValue;
-  const totalRoi = monthlyLeveragedValue - platformMonthlyUsed;
+
+  // NEW: Include monthlyRunCost in calculations
+  const monthlyRunCost = inputs.monthlyRunCost || 0;
+  const netMonthlyAfterRunCost = monthlyLeveragedValue - platformMonthlyUsed - monthlyRunCost;
+  const totalRoi = netMonthlyAfterRunCost;
 
   const roiPercentMonthly = platformMonthlyUsed > 0
     ? (totalRoi / platformMonthlyUsed) * 100
@@ -177,9 +192,9 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
   const gross6m = monthlyLeveragedValue * 6;
   const gross1y = monthlyLeveragedValue * 12;
 
-  const roiQuarterNet = grossQuarter - platformAnnualUsed;
-  const roi6mNet = gross6m - platformAnnualUsed;
-  const roi1yNet = gross1y - platformAnnualUsed;
+  const roiQuarterNet = grossQuarter - platformAnnualUsed - (monthlyRunCost * 3);
+  const roi6mNet = gross6m - platformAnnualUsed - (monthlyRunCost * 6);
+  const roi1yNet = gross1y - platformAnnualUsed - (monthlyRunCost * 12);
 
   const roiQuarterPercent = platformAnnualUsed > 0
     ? (roiQuarterNet / platformAnnualUsed) * 100
@@ -205,6 +220,23 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
 
   const directSavings = msTotal;
   const growthValue = growthMonthly;
+
+  // NEW: Scenario bands (LOW, BASE, HIGH)
+  const lowCaseMonthlyROI = (monthlyLeveragedValue * 0.60) - platformMonthlyUsed - monthlyRunCost;
+  const baseCaseMonthlyROI = (monthlyLeveragedValue * 0.80) - platformMonthlyUsed - monthlyRunCost;
+  const highCaseMonthlyROI = (monthlyLeveragedValue * 1.00) - platformMonthlyUsed - monthlyRunCost;
+
+  const lowCaseQuarterlyROI = (monthlyLeveragedValue * 0.60 * 3) - platformAnnualUsed - (monthlyRunCost * 3);
+  const baseCaseQuarterlyROI = (monthlyLeveragedValue * 0.80 * 3) - platformAnnualUsed - (monthlyRunCost * 3);
+  const highCaseQuarterlyROI = (monthlyLeveragedValue * 1.00 * 3) - platformAnnualUsed - (monthlyRunCost * 3);
+
+  const lowCase6mROI = (monthlyLeveragedValue * 0.60 * 6) - platformAnnualUsed - (monthlyRunCost * 6);
+  const baseCase6mROI = (monthlyLeveragedValue * 0.80 * 6) - platformAnnualUsed - (monthlyRunCost * 6);
+  const highCase6mROI = (monthlyLeveragedValue * 1.00 * 6) - platformAnnualUsed - (monthlyRunCost * 6);
+
+  const lowCase1yROI = (monthlyLeveragedValue * 0.60 * 12) - platformAnnualUsed - (monthlyRunCost * 12);
+  const baseCase1yROI = (monthlyLeveragedValue * 0.80 * 12) - platformAnnualUsed - (monthlyRunCost * 12);
+  const highCase1yROI = (monthlyLeveragedValue * 1.00 * 12) - platformAnnualUsed - (monthlyRunCost * 12);
 
   return {
     tOld,
@@ -243,5 +275,20 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
     monthsToRoi,
     quartersToRoi,
     paybackMonths,
+    timeSavedPerRunMinutes,
+    calculatedErrorReductionPercent: errorReductionPercent,
+    netMonthlyAfterRunCost,
+    lowCaseMonthlyROI,
+    baseCaseMonthlyROI,
+    highCaseMonthlyROI,
+    lowCaseQuarterlyROI,
+    baseCaseQuarterlyROI,
+    highCaseQuarterlyROI,
+    lowCase6mROI,
+    baseCase6mROI,
+    highCase6mROI,
+    lowCase1yROI,
+    baseCase1yROI,
+    highCase1yROI,
   };
 }

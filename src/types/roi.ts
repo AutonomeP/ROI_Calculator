@@ -14,6 +14,11 @@ export interface ROIInputs {
   platformCost: number;
   complexity: Complexity;
   solutionMode: SolutionMode;
+  percentAutomated: number;
+  baselineErrorCostMonthly: number;
+  errorReductionPercent: number;
+  velocityMultiplier: number;
+  monthlyRunCost: number;
 }
 
 export interface ROIInputStrings {
@@ -26,6 +31,11 @@ export interface ROIInputStrings {
   opportunityValue: string;
   wls: string;
   platformCost: string;
+  percentAutomated: string;
+  baselineErrorCostMonthly: string;
+  errorReductionPercent: string;
+  velocityMultiplier: string;
+  monthlyRunCost: string;
 }
 
 export interface ROICalculations {
@@ -65,4 +75,19 @@ export interface ROICalculations {
   monthsToRoi: number;
   quartersToRoi: number;
   paybackMonths: number;
+  timeSavedPerRunMinutes: number;
+  calculatedErrorReductionPercent: number;
+  netMonthlyAfterRunCost: number;
+  lowCaseMonthlyROI: number;
+  baseCaseMonthlyROI: number;
+  highCaseMonthlyROI: number;
+  lowCaseQuarterlyROI: number;
+  baseCaseQuarterlyROI: number;
+  highCaseQuarterlyROI: number;
+  lowCase6mROI: number;
+  baseCase6mROI: number;
+  highCase6mROI: number;
+  lowCase1yROI: number;
+  baseCase1yROI: number;
+  highCase1yROI: number;
 }

@@ -319,7 +319,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
         </div>
         <div className={`p-6 rounded-xl mb-6 border ${theme === 'dark' ? 'bg-black/30 border-white/10' : 'bg-white/50 border-black/10'}`}>
           <div className={`font-mono text-sm md:text-base leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
-            ROI = ( <span className="text-roi-orange font-bold">MS</span> + (<span className="text-roi-orange font-bold">OC</span> + <span className="text-roi-orange font-bold">RG</span>) × <span className="text-roi-orange font-bold">VM</span> ) × <span className="text-roi-orange font-bold">WLS</span> – <span className="text-roi-orange font-bold">Platform Cost</span>
+            ROI = ( <span className="text-roi-orange font-bold">MS</span> + (<span className="text-roi-orange font-bold">OC</span> + <span className="text-roi-orange font-bold">RG</span>) × <span className="text-roi-orange font-bold">VM</span> ) × <span className="text-roi-orange font-bold">WLS</span> – <span className="text-roi-orange font-bold">Platform Cost</span> – <span className="text-roi-orange font-bold">Run Cost</span>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -350,6 +350,77 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
           <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-black/20 border-white/10' : 'bg-white/40 border-black/10'}`}>
             <span className="text-roi-orange font-bold text-sm block mb-1">One-Time Cost:</span>
             <span className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.platformAnnual)}</span>
+          </div>
+        </div>
+      </GlassCard>
+
+      <GlassCard>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-1 h-8 bg-roi-orange rounded-full"></div>
+          <h4 className={`text-xl font-bold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>Scenario Analysis</h4>
+        </div>
+        <p className={`text-sm mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+          Conservative, base, and optimistic ROI projections based on realization factors
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className={`p-5 rounded-xl border ${theme === 'dark' ? 'bg-amber-500/10 border-amber-500/30' : 'bg-amber-50 border-amber-500/30'}`}>
+            <div className="flex items-center gap-2 mb-4">
+              <span className={`text-xs uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-amber-400' : 'text-amber-600'}`}>Low Case (60%)</span>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarter</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCaseQuarterlyROI)}</span>
+              </div>
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>6 Months</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCase6mROI)}</span>
+              </div>
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>12 Months</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCase1yROI)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className={`p-5 rounded-xl border ${theme === 'dark' ? 'bg-blue-500/10 border-blue-500/30' : 'bg-blue-50 border-blue-500/30'}`}>
+            <div className="flex items-center gap-2 mb-4">
+              <span className={`text-xs uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>Base Case (80%)</span>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarter</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCaseQuarterlyROI)}</span>
+              </div>
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>6 Months</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCase6mROI)}</span>
+              </div>
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>12 Months</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCase1yROI)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className={`p-5 rounded-xl border ${theme === 'dark' ? 'bg-green-500/10 border-green-500/30' : 'bg-green-50 border-green-500/30'}`}>
+            <div className="flex items-center gap-2 mb-4">
+              <span className={`text-xs uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>High Case (100%)</span>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarter</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.highCaseQuarterlyROI)}</span>
+              </div>
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>6 Months</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.highCase6mROI)}</span>
+              </div>
+              <div>
+                <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>12 Months</span>
+                <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.highCase1yROI)}</span>
+              </div>
+            </div>
           </div>
         </div>
       </GlassCard>
