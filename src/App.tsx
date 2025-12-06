@@ -6,10 +6,12 @@ import { useTheme } from './contexts/ThemeContext';
 import InputWizardPanel from './components/InputWizardPanel';
 import LiveResultPanel from './components/LiveResultPanel';
 import ModeSelectionModal from './components/ModeSelectionModal';
+import LogoLoadingOverlay from './components/LogoLoadingOverlay';
 
 function App() {
   const { theme, toggleTheme } = useTheme();
   const [hasChosenMode, setHasChosenMode] = useState(false);
+  const [showLogoLoading, setShowLogoLoading] = useState(false);
   const [inputs, setInputs] = useState<ROIInputs>({
     processName: '',
     tOldMinutes: 0,
@@ -54,6 +56,11 @@ function App() {
 
   const handleSelectMode = (mode: SolutionMode) => {
     setInputs(prev => ({ ...prev, solutionMode: mode }));
+    setShowLogoLoading(true);
+  };
+
+  const handleLoadingComplete = () => {
+    setShowLogoLoading(false);
     setHasChosenMode(true);
   };
 
@@ -78,7 +85,8 @@ function App() {
       <div className={`absolute top-0 right-0 w-[800px] h-[800px] opacity-20 blur-3xl ${theme === 'dark' ? 'bg-orange-glow' : 'bg-orange-glow-light'}`}></div>
       <div className={`absolute bottom-0 left-0 w-[600px] h-[600px] opacity-10 blur-3xl ${theme === 'dark' ? 'bg-orange-glow' : 'bg-orange-glow-light'}`}></div>
 
-      <div className="relative z-10 max-w-[1800px] mx-auto px-6 md:px-10 py-10 md:py-16">
+      {hasChosenMode && !showLogoLoading && (
+        <div className="relative z-10 max-w-[1800px] mx-auto px-6 md:px-10 py-10 md:py-16">
         <header className="mb-12 md:mb-16">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
             <div className="space-y-3">
@@ -154,9 +162,11 @@ function App() {
             <LiveResultPanel inputs={inputs} calculations={calculations} />
           </div>
         </div>
-      </div>
+        </div>
+      )}
 
-      {!hasChosenMode && <ModeSelectionModal onSelectMode={handleSelectMode} />}
+      {!hasChosenMode && !showLogoLoading && <ModeSelectionModal onSelectMode={handleSelectMode} />}
+      <LogoLoadingOverlay isOpen={showLogoLoading} onComplete={handleLoadingComplete} />
     </div>
   );
 }
