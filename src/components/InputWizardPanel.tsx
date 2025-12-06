@@ -106,7 +106,7 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
           }`}>
             Velocity Multiplier (VM)
           </label>
-          <div className="p-4 rounded-lg border border-white/10 bg-black/20">
+          <div className="p-4">
             <div className="text-3xl font-black text-roi-orange mb-2">
               {calculations.vm.toFixed(2)}×
             </div>
