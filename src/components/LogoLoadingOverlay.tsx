@@ -16,7 +16,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
     if (isOpen) {
       const timer = setTimeout(() => {
         onComplete();
-      }, 2000);
+      }, 2500);
 
       return () => clearTimeout(timer);
     }
@@ -42,13 +42,13 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
       <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-roi-orange/5"></div>
 
       <div className="relative flex flex-col items-center justify-center px-4">
-        <div className="relative w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48">
+        <div className="relative w-48 h-48 md:w-60 md:h-60 lg:w-72 lg:h-72">
           <motion.div
             className="absolute inset-0 overflow-hidden"
             initial={{ clipPath: 'inset(100% 0% 0% 0%)' }}
             animate={{ clipPath: 'inset(0% 0% 0% 0%)' }}
             transition={{
-              duration: 1.2,
+              duration: 1.8,
               delay: 0.2,
               ease: [0.22, 1, 0.36, 1],
             }}
@@ -60,7 +60,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
               initial={{ scale: 0.95 }}
               animate={{ scale: 1 }}
               transition={{
-                duration: 1.2,
+                duration: 1.8,
                 delay: 0.2,
                 ease: [0.22, 1, 0.36, 1],
               }}
@@ -73,7 +73,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
             animate={{ opacity: [0, 0.3, 0] }}
             transition={{
               duration: 0.6,
-              delay: 1.4,
+              delay: 1.8,
               ease: "easeInOut",
             }}
           >
@@ -100,7 +100,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
           className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-roi-orange to-transparent"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 2, ease: "linear" }}
+          transition={{ duration: 2.5, ease: "linear" }}
           style={{ originX: 0 }}
         ></motion.div>
       </div>
