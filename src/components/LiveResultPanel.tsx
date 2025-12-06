@@ -290,7 +290,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
         </div>
         <div className={`p-6 rounded-xl mb-6 border ${theme === 'dark' ? 'bg-black/30 border-white/10' : 'bg-white/50 border-black/10'}`}>
           <div className={`font-mono text-sm md:text-base leading-relaxed ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
-            ROI = ( <span className="text-roi-orange font-bold">MS</span> + (<span className="text-roi-orange font-bold">OC</span> + <span className="text-roi-orange font-bold">RG</span>) × <span className="text-roi-orange font-bold">VM</span> ) × <span className="text-roi-orange font-bold">WLS</span> – <span className="text-roi-orange font-bold">PlatformCost</span>
+            ROI = ( <span className="text-roi-orange font-bold">MS</span> + (<span className="text-roi-orange font-bold">OC</span> + <span className="text-roi-orange font-bold">RG</span>) × <span className="text-roi-orange font-bold">VM</span> ) × <span className="text-roi-orange font-bold">WLS</span> – <span className="text-roi-orange font-bold">Platform Cost</span>
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -315,7 +315,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
             <span className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatNumber(inputs.wls, 1)}</span>
           </div>
           <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-black/20 border-white/10' : 'bg-white/40 border-black/10'}`}>
-            <span className="text-roi-orange font-bold text-sm block mb-1">PlatformCost:</span>
+            <span className="text-roi-orange font-bold text-sm block mb-1">Platform Cost:</span>
             <span className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.platformAnnual)}</span>
           </div>
         </div>

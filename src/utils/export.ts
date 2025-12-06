@@ -54,7 +54,7 @@ Total ROI: ${formatCurrency(calculations.totalRoi)}/month
 ROI Percentage: ${formatPercent(calculations.roiPercent)}
 
 ROI Formula:
-ROI = (MS + (OC + RG) × VM) × WLS – PlatformCost
+ROI = (MS + (OC + RG) × VM) × WLS – Platform Cost
 
 Where:
   MS  = Monthly Savings: ${formatCurrency(calculations.msTotal)}
@@ -62,7 +62,7 @@ Where:
   RG  = Revenue Generated: ${formatCurrency(calculations.rg)}
   VM  = Velocity Multiplier: ${calculations.vm.toFixed(2)}×
   WLS = Weighted Leverage Score: ${formatNumber(inputs.wls, 1)}
-  PlatformCost = ${formatCurrency(calculations.platformAnnual)} (one-time) or ${formatCurrency(calculations.platformMonthly)}/month
+  Platform Cost = ${formatCurrency(calculations.platformAnnual)} (one-time) or ${formatCurrency(calculations.platformMonthly)}/month
 
 ========================================
 This report was generated using the ROI
