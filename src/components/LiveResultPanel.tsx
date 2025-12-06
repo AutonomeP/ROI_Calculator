@@ -149,7 +149,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
               <div className="text-5xl font-black text-roi-orange mb-4 leading-none tracking-tight">
                 {formatCurrency(displayedRoiValue)}
               </div>
-              <p className={`text-sm leading-snug mb-2 font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+              <p className={`text-sm leading-snug mb-2 font-medium text-center ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
                 {displayedRoiCaption}
                 {displayedRoiCaptionSubtitle && (
                   <>
