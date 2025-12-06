@@ -41,6 +41,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
   let displayedRoiValue: number;
   let displayedRoiLabel: string;
   let displayedRoiCaption: string;
+  let displayedRoiCaptionSubtitle: string | null;
   let displayedRoiPercent: number;
   let displayedRoiPercentCaption: string;
 
@@ -49,13 +50,15 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
       displayedRoiValue = calculations.totalRoi;
       displayedRoiLabel = 'Total ROI ($/month)';
       displayedRoiCaption = 'Projected monthly ROI after cost';
+      displayedRoiCaptionSubtitle = null;
       displayedRoiPercent = calculations.roiPercent;
       displayedRoiPercentCaption = 'Relative to monthly platform cost';
       break;
     case 'oneYear':
       displayedRoiValue = calculations.roi1yNet;
       displayedRoiLabel = 'Total ROI (12 months)';
-      displayedRoiCaption = 'Projected ROI over 12 months (after one-time build cost)';
+      displayedRoiCaption = 'Projected ROI over 12 months';
+      displayedRoiCaptionSubtitle = '(after one-time build cost)';
       displayedRoiPercent = calculations.roi1yPercent;
       displayedRoiPercentCaption = 'Relative to one-time platform cost';
       break;
@@ -63,7 +66,8 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
     default:
       displayedRoiValue = calculations.roi6mNet;
       displayedRoiLabel = 'Total ROI (6 months)';
-      displayedRoiCaption = 'Projected ROI over 6 months (after one-time build cost)';
+      displayedRoiCaption = 'Projected ROI over 6 months';
+      displayedRoiCaptionSubtitle = '(after one-time build cost)';
       displayedRoiPercent = calculations.roi6mPercent;
       displayedRoiPercentCaption = 'Relative to one-time platform cost';
       break;
@@ -147,6 +151,12 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
               </div>
               <p className={`text-sm leading-snug mb-2 font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
                 {displayedRoiCaption}
+                {displayedRoiCaptionSubtitle && (
+                  <>
+                    <br />
+                    {displayedRoiCaptionSubtitle}
+                  </>
+                )}
               </p>
               <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
                 At current velocity of {vmLabel}
