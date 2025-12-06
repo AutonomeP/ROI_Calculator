@@ -66,6 +66,11 @@ function App() {
       ? 'Calculate the ROI of intelligent, agentic systems that scale your operations.'
       : 'Calculate the real business impact of automation.';
 
+  const headerTitle =
+    inputs.solutionMode === 'agentic'
+      ? 'Intelligent Systems ROI'
+      : 'Automation ROI';
+
   return (
     <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-roi-black' : 'bg-roi-light-bg'}`}>
       <div className={`absolute inset-0 ${theme === 'dark' ? 'bg-premium-gradient' : 'bg-premium-gradient-light'}`}></div>
@@ -78,7 +83,7 @@ function App() {
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
             <div className="space-y-3">
               <h1 className={`text-5xl md:text-6xl font-black tracking-tight leading-none ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
-                ROI Intelligence
+                {headerTitle}
                 <span className="block text-roi-orange mt-2">Calculator</span>
               </h1>
               <p className={`text-lg md:text-xl max-w-2xl leading-relaxed ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
