@@ -17,12 +17,8 @@ interface LiveResultPanelProps {
 export default function LiveResultPanel({ inputs, calculations }: LiveResultPanelProps) {
   const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
-  const [roiView, setRoiView] = useState<RoiView>(inputs.solutionMode === 'agentic' ? 'oneYear' : 'sixMonths');
+  const [roiView, setRoiView] = useState<RoiView>('quarter');
   const [roiBeforeCostCollapsed, setRoiBeforeCostCollapsed] = useState(true);
-
-  useEffect(() => {
-    setRoiView(inputs.solutionMode === 'agentic' ? 'oneYear' : 'sixMonths');
-  }, [inputs.solutionMode]);
 
   const handleDownload = () => {
     downloadROIReport(inputs, calculations);
@@ -41,7 +37,6 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
   let displayedRoiValue: number;
   let displayedRoiLabel: string;
   let displayedRoiCaption: string;
-  let displayedRoiCaptionSubtitle: string | null;
   let displayedRoiPercent: number;
   let displayedRoiPercentCaption: string;
 
@@ -49,16 +44,14 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
     case 'quarter':
       displayedRoiValue = calculations.roiQuarterNet;
       displayedRoiLabel = 'Total ROI (Quarter)';
-      displayedRoiCaption = 'Projected ROI in the first quarter';
-      displayedRoiCaptionSubtitle = '(after one-time build cost)';
+      displayedRoiCaption = 'Projected ROI over selected period (after one-time build cost)';
       displayedRoiPercent = calculations.roiQuarterPercent;
       displayedRoiPercentCaption = 'Return in first quarter vs one-time build cost';
       break;
     case 'oneYear':
       displayedRoiValue = calculations.roi1yNet;
       displayedRoiLabel = 'Total ROI (12 months)';
-      displayedRoiCaption = 'Projected ROI over 12 months';
-      displayedRoiCaptionSubtitle = '(after one-time build cost)';
+      displayedRoiCaption = 'Projected ROI over selected period (after one-time build cost)';
       displayedRoiPercent = calculations.roi1yPercent;
       displayedRoiPercentCaption = 'Return over 12 months vs one-time build cost';
       break;
@@ -66,8 +59,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
     default:
       displayedRoiValue = calculations.roi6mNet;
       displayedRoiLabel = 'Total ROI (6 months)';
-      displayedRoiCaption = 'Projected ROI over 6 months';
-      displayedRoiCaptionSubtitle = '(after one-time build cost)';
+      displayedRoiCaption = 'Projected ROI over selected period (after one-time build cost)';
       displayedRoiPercent = calculations.roi6mPercent;
       displayedRoiPercentCaption = 'Return over 6 months vs one-time build cost';
       break;
@@ -151,12 +143,6 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
               </div>
               <p className={`text-sm leading-snug mb-2 font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
                 {displayedRoiCaption}
-                {displayedRoiCaptionSubtitle && (
-                  <>
-                    <br />
-                    {displayedRoiCaptionSubtitle}
-                  </>
-                )}
               </p>
               <p className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
                 At current velocity of {vmLabel}
@@ -263,7 +249,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
             <span className={`font-bold text-2xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatNumber(inputs.wls, 1)}</span>
           </div>
           <div className={`p-5 rounded-xl border ${theme === 'dark' ? 'bg-black/20 border-white/10' : 'bg-white/40 border-black/10'}`}>
-            <span className={`text-xs uppercase tracking-wider block mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Platform cost</span>
+            <span className={`text-xs uppercase tracking-wider block mb-2 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>One-time cost</span>
             <span className={`font-bold text-2xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.platformAnnual)}</span>
             <span className={`text-xs block mt-1 ${theme === 'dark' ? 'text-gray-500' : 'text-roi-text-secondary'}`}>({formatCurrency(calculations.platformMonthly, 2)}/mo)</span>
           </div>
@@ -293,17 +279,29 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
             In first quarter: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roiQuarterNet)}</span> • In 6 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi6mNet)}</span> • In 12 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi1yNet)}</span>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-roi-orange/10 to-roi-orange/5 p-6 rounded-xl border-2 border-roi-orange/30 mt-6 shadow-lg">
+        <div className={`p-6 rounded-xl border-2 mt-6 shadow-lg ${
+          calculations.monthsToRoi > 3
+            ? `bg-gradient-to-r ${theme === 'dark' ? 'from-amber-500/20 to-amber-500/10 border-amber-500/40' : 'from-amber-500/15 to-amber-500/5 border-amber-500/30'}`
+            : 'bg-gradient-to-r from-roi-orange/10 to-roi-orange/5 border-roi-orange/30'
+        }`}>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div className="flex flex-col">
-              <span className={`text-xs uppercase tracking-wider font-bold mb-1 ${theme === 'dark' ? 'text-roi-orange/80' : 'text-roi-orange'}`}>
-                Break-Even Point
-              </span>
-              <span className={`font-semibold text-base ${theme === 'dark' ? 'text-gray-300' : 'text-roi-text-primary'}`}>
+              <span className={`text-xs uppercase tracking-wider font-bold mb-1 ${
+                calculations.monthsToRoi > 3
+                  ? (theme === 'dark' ? 'text-amber-400' : 'text-amber-600')
+                  : (theme === 'dark' ? 'text-roi-orange/80' : 'text-roi-orange')
+              }`}>
                 Time to Value
               </span>
+              <span className={`font-semibold text-base ${theme === 'dark' ? 'text-gray-300' : 'text-roi-text-primary'}`}>
+                {calculations.quartersToRoi.toFixed(1)} quarters
+              </span>
             </div>
-            <span className={`font-bold text-3xl sm:text-4xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+            <span className={`font-bold text-3xl sm:text-4xl ${
+              calculations.monthsToRoi > 3
+                ? (theme === 'dark' ? 'text-amber-400' : 'text-amber-600')
+                : (theme === 'dark' ? 'text-white' : 'text-roi-text-primary')
+            }`}>
               {formatTimeToRoi(calculations.monthsToRoi)}
             </span>
           </div>
@@ -339,10 +337,14 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
           </div>
           <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-black/20 border-white/10' : 'bg-white/40 border-black/10'}`}>
             <span className="text-roi-orange font-bold text-sm block mb-1">WLS:</span>
-            <span className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatNumber(inputs.wls, 1)}</span>
+            <span className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{Math.round(inputs.wls)} → {calculations.wlsMultiplier.toFixed(1)}×</span>
           </div>
           <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-black/20 border-white/10' : 'bg-white/40 border-black/10'}`}>
-            <span className="text-roi-orange font-bold text-sm block mb-1">Platform Cost:</span>
+            <span className="text-roi-orange font-bold text-sm block mb-1">Monthly Leveraged:</span>
+            <span className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.monthlyLeveragedValue)}</span>
+          </div>
+          <div className={`p-4 rounded-lg border ${theme === 'dark' ? 'bg-black/20 border-white/10' : 'bg-white/40 border-black/10'}`}>
+            <span className="text-roi-orange font-bold text-sm block mb-1">One-Time Cost:</span>
             <span className={`font-semibold text-base ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.platformAnnual)}</span>
           </div>
         </div>

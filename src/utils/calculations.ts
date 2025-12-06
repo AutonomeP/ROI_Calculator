@@ -2,6 +2,18 @@ import { ROIInputs, ROICalculations, Complexity, SolutionMode } from '../types/r
 
 const AGENTIC_MULTIPLIER = 2.1107;
 
+export function getWLSMultiplier(wls: number): number {
+  const wlsClamped = Math.min(Math.max(Math.round(wls), 1), 5);
+  const multipliers: Record<number, number> = {
+    1: 1.0,
+    2: 1.5,
+    3: 2.0,
+    4: 2.5,
+    5: 3.0,
+  };
+  return multipliers[wlsClamped] || 2.0;
+}
+
 const complexityTimeFactor: Record<Complexity, number> = {
   simple: 0.24,
   moderate: 0.40,
@@ -132,29 +144,38 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
 
   const wlsRaw = inputs.wls || 0;
   const wls = Math.min(Math.max(wlsRaw, 1), 5);
+  const wlsMultiplier = getWLSMultiplier(wls);
 
   const growthMonthly = (oc + rg) * vm;
 
   const baseMonthlyValue = msTotal + growthMonthly;
 
-  const roiBeforeCost = baseMonthlyValue * wls;
+  const leveragedMonthly = baseMonthlyValue * wlsMultiplier;
+
+  let monthlyLeveragedValue = leveragedMonthly;
+  if (inputs.solutionMode === 'agentic') {
+    const agenticLeveraged = leveragedMonthly * AGENTIC_MULTIPLIER;
+    const maxLeveraged = baseMonthlyValue * 5;
+    monthlyLeveragedValue = Math.min(agenticLeveraged, maxLeveraged);
+  }
 
   const {
     suggestedAnnualCost,
     suggestedMonthlyEquivalent,
     platformAnnualUsed,
     platformMonthlyUsed,
-  } = calculatePlatformCost(roiBeforeCost, inputs.platformCost, inputs.solutionMode);
+  } = calculatePlatformCost(monthlyLeveragedValue, inputs.platformCost, inputs.solutionMode);
 
-  const totalRoi = roiBeforeCost - platformMonthlyUsed;
+  const roiBeforeCost = monthlyLeveragedValue;
+  const totalRoi = monthlyLeveragedValue - platformMonthlyUsed;
 
   const roiPercentMonthly = platformMonthlyUsed > 0
     ? (totalRoi / platformMonthlyUsed) * 100
     : 0;
 
-  const grossQuarter = roiBeforeCost * 3;
-  const gross6m = roiBeforeCost * 6;
-  const gross1y = roiBeforeCost * 12;
+  const grossQuarter = monthlyLeveragedValue * 3;
+  const gross6m = monthlyLeveragedValue * 6;
+  const gross1y = monthlyLeveragedValue * 12;
 
   const roiQuarterNet = grossQuarter - platformAnnualUsed;
   const roi6mNet = gross6m - platformAnnualUsed;
@@ -172,14 +193,14 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
     ? (roi1yNet / platformAnnualUsed) * 100
     : 0;
 
-  const monthsToRoi = roiBeforeCost > 0
-    ? platformAnnualUsed / roiBeforeCost
+  const monthsToRoi = monthlyLeveragedValue > 0
+    ? platformAnnualUsed / monthlyLeveragedValue
     : 0;
 
   const quartersToRoi = monthsToRoi / 3;
 
-  const paybackMonths = roiBeforeCost > 0
-    ? platformAnnualUsed / roiBeforeCost
+  const paybackMonths = monthlyLeveragedValue > 0
+    ? platformAnnualUsed / monthlyLeveragedValue
     : 0;
 
   const directSavings = msTotal;
@@ -197,6 +218,8 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
     rg,
     directSavings,
     growthValue,
+    wlsMultiplier,
+    monthlyLeveragedValue,
     roiBeforeCost,
     totalRoi,
     roiPercent: roiPercentMonthly,

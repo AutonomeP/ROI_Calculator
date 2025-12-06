@@ -40,6 +40,8 @@ export interface ROICalculations {
   rg: number;
   directSavings: number;
   growthValue: number;
+  wlsMultiplier: number;
+  monthlyLeveragedValue: number;
   roiBeforeCost: number;
   totalRoi: number;
   roiPercent: number;
