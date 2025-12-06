@@ -300,7 +300,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
                 Break-Even Point
               </span>
               <span className={`font-semibold text-base ${theme === 'dark' ? 'text-gray-300' : 'text-roi-text-primary'}`}>
-                Time to ROI
+                Time to Value
               </span>
             </div>
             <span className={`font-bold text-3xl sm:text-4xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
