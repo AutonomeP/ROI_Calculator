@@ -293,10 +293,19 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
             In first quarter: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roiQuarterNet)}</span> • In 6 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi6mNet)}</span> • In 12 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi1yNet)}</span>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-roi-orange/10 to-transparent p-6 rounded-xl border border-roi-orange/20 mt-4">
-          <div className="flex justify-between items-center">
-            <span className={`font-medium text-base ${theme === 'dark' ? 'text-gray-300' : 'text-roi-text-primary'}`}>Time to ROI (Break-Even Point):</span>
-            <span className={`font-bold text-2xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatTimeToRoi(calculations.monthsToRoi)}</span>
+        <div className="bg-gradient-to-r from-roi-orange/10 to-roi-orange/5 p-6 rounded-xl border-2 border-roi-orange/30 mt-6 shadow-lg">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="flex flex-col">
+              <span className={`text-xs uppercase tracking-wider font-bold mb-1 ${theme === 'dark' ? 'text-roi-orange/80' : 'text-roi-orange'}`}>
+                Break-Even Point
+              </span>
+              <span className={`font-semibold text-base ${theme === 'dark' ? 'text-gray-300' : 'text-roi-text-primary'}`}>
+                Time to ROI
+              </span>
+            </div>
+            <span className={`font-bold text-3xl sm:text-4xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+              {formatTimeToRoi(calculations.monthsToRoi)}
+            </span>
           </div>
         </div>
       </GlassCard>
