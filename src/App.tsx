@@ -63,7 +63,7 @@ function App() {
 
   const modeSubtitle =
     inputs.solutionMode === 'agentic'
-      ? 'Model the ROI of intelligent, agentic systems that coordinate tools and decisions.'
+      ? 'Calculate the ROI of intelligent, agentic systems that coordinate tools, make decisions, and scale operations autonomously.'
       : 'Calculate the real business impact of automation.';
 
   return (
