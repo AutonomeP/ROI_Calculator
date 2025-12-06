@@ -64,7 +64,7 @@ function App() {
   const modeSubtitle =
     inputs.solutionMode === 'agentic'
       ? 'Model the ROI of intelligent, agentic systems that coordinate tools and decisions.'
-      : 'Model the ROI of automation workflows that save time and reduce manual effort.';
+      : 'Model the ROI of automated workflows that accelerate execution, reduce costs, and unlock operational leverage.';
 
   return (
     <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-roi-black' : 'bg-roi-light-bg'}`}>
