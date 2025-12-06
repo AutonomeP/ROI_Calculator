@@ -1,15 +1,20 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { ROIInputs, ROIInputStrings, SolutionMode, Complexity } from './types/roi';
 import { calculateROI, getVMByComplexity, getPercentAutomatedByComplexity, getErrorReductionByComplexity } from './utils/calculations';
 import { useTheme } from './contexts/ThemeContext';
+import { useAuth } from './contexts/AuthContext';
+import { useUserTracking } from './hooks/useUserTracking';
+import { logRoiSession } from './utils/analytics';
 import InputWizardPanel from './components/InputWizardPanel';
 import LiveResultPanel from './components/LiveResultPanel';
 import ModeSelectionModal from './components/ModeSelectionModal';
 import LogoLoadingOverlay from './components/LogoLoadingOverlay';
+import EmailGateModal from './components/EmailGateModal';
 
 function App() {
   const { theme, toggleTheme } = useTheme();
+  const { session, loading: authLoading } = useAuth();
   const [hasChosenMode, setHasChosenMode] = useState(false);
   const [showLogoLoading, setShowLogoLoading] = useState(false);
   const [inputs, setInputs] = useState<ROIInputs>({
@@ -50,6 +55,30 @@ function App() {
   });
 
   const calculations = useMemo(() => calculateROI(inputs), [inputs]);
+
+  useUserTracking(session);
+
+  const sessionLogTimeout = useRef<NodeJS.Timeout>();
+
+  useEffect(() => {
+    if (!session || !hasChosenMode) return;
+
+    if (sessionLogTimeout.current) {
+      clearTimeout(sessionLogTimeout.current);
+    }
+
+    sessionLogTimeout.current = setTimeout(() => {
+      if (inputs.runsPerMonth > 0 || inputs.tOldMinutes > 0) {
+        logRoiSession(session, inputs, calculations);
+      }
+    }, 3000);
+
+    return () => {
+      if (sessionLogTimeout.current) {
+        clearTimeout(sessionLogTimeout.current);
+      }
+    };
+  }, [session, inputs, calculations, hasChosenMode]);
 
   const handleInputChange = (field: keyof ROIInputs, value: string | number) => {
     if (field === 'processName') {
@@ -115,6 +144,21 @@ function App() {
     inputs.solutionMode === 'agentic'
       ? 'Intelligent Systems ROI'
       : 'Automation ROI';
+
+  if (authLoading) {
+    return (
+      <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-roi-black' : 'bg-roi-light-bg'}`}>
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-roi-orange border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className={`text-sm ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <EmailGateModal />;
+  }
 
   return (
     <div className={`min-h-screen relative overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-roi-black' : 'bg-roi-light-bg'}`}>
