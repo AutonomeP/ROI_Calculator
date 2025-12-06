@@ -94,7 +94,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <GlassCard>
           <div className="flex flex-col h-full">
             <div className="flex items-start justify-between mb-6">
@@ -165,37 +165,39 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
           </div>
         </GlassCard>
 
-        <GlassCard>
-          <div className="flex flex-col h-full">
-            <span className={`text-[10px] uppercase tracking-[0.15em] font-bold mb-6 ${theme === 'dark' ? 'text-gray-500' : 'text-roi-text-secondary/60'}`}>
-              ROI (%)
-            </span>
-            <div className="mt-auto">
-              <div className={`text-6xl font-black mb-4 leading-none tracking-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
-                {formatPercent(displayedRoiPercent)}
+        <div className="flex flex-col gap-6">
+          <GlassCard>
+            <div className="flex flex-col h-full">
+              <span className={`text-[10px] uppercase tracking-[0.15em] font-bold mb-6 ${theme === 'dark' ? 'text-gray-500' : 'text-roi-text-secondary/60'}`}>
+                ROI (%)
+              </span>
+              <div className="mt-auto">
+                <div className={`text-6xl font-black mb-4 leading-none tracking-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+                  {formatPercent(displayedRoiPercent)}
+                </div>
+                <p className={`text-sm font-medium leading-snug pt-4 border-t ${theme === 'dark' ? 'text-gray-400 border-white/10' : 'text-roi-text-secondary border-black/10'}`}>
+                  {displayedRoiPercentCaption}
+                </p>
               </div>
-              <p className={`text-sm font-medium leading-snug pt-4 border-t ${theme === 'dark' ? 'text-gray-400 border-white/10' : 'text-roi-text-secondary border-black/10'}`}>
-                {displayedRoiPercentCaption}
-              </p>
             </div>
-          </div>
-        </GlassCard>
+          </GlassCard>
 
-        <GlassCard>
-          <div className="flex flex-col h-full">
-            <span className={`text-[10px] uppercase tracking-[0.15em] font-bold mb-6 ${theme === 'dark' ? 'text-gray-500' : 'text-roi-text-secondary/60'}`}>
-              VELOCITY
-            </span>
-            <div className="mt-auto">
-              <div className={`text-6xl font-black mb-4 leading-none tracking-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
-                {calculations.vm.toFixed(1)}×
+          <GlassCard>
+            <div className="flex flex-col h-full">
+              <span className={`text-[10px] uppercase tracking-[0.15em] font-bold mb-6 ${theme === 'dark' ? 'text-gray-500' : 'text-roi-text-secondary/60'}`}>
+                VELOCITY
+              </span>
+              <div className="mt-auto">
+                <div className={`text-6xl font-black mb-4 leading-none tracking-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+                  {calculations.vm.toFixed(1)}×
+                </div>
+                <p className={`text-sm font-medium leading-snug pt-4 border-t ${theme === 'dark' ? 'text-gray-400 border-white/10' : 'text-roi-text-secondary border-black/10'}`}>
+                  Old: {calculations.tOld.toFixed(1)} min • New: {calculations.tNew.toFixed(1)} min
+                </p>
               </div>
-              <p className={`text-sm font-medium leading-snug pt-4 border-t ${theme === 'dark' ? 'text-gray-400 border-white/10' : 'text-roi-text-secondary border-black/10'}`}>
-                Old: {calculations.tOld.toFixed(1)} min • New: {calculations.tNew.toFixed(1)} min
-              </p>
             </div>
-          </div>
-        </GlassCard>
+          </GlassCard>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
