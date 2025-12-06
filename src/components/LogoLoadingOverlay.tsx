@@ -16,7 +16,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
     if (isOpen) {
       const timer = setTimeout(() => {
         onComplete();
-      }, 2000);
+      }, 2500);
 
       return () => clearTimeout(timer);
     }
@@ -73,7 +73,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
             animate={{ opacity: [0, 0.3, 0] }}
             transition={{
               duration: 0.6,
-              delay: 1.4,
+              delay: 1.6,
               ease: "easeInOut",
             }}
           >
@@ -87,8 +87,13 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
           className="mt-8 text-center"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 1.0 }}
+          transition={{ duration: 0.5, delay: 1.4 }}
         >
+          <h2 className={`text-2xl md:text-3xl font-bold tracking-tight mb-2 ${
+            theme === 'dark' ? 'text-white' : 'text-roi-black'
+          }`}>
+            Autonome Partners
+          </h2>
           <p className={`text-sm font-medium ${
             theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'
           }`}>
@@ -100,7 +105,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
           className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-roi-orange to-transparent"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
-          transition={{ duration: 2, ease: "linear" }}
+          transition={{ duration: 2.5, ease: "linear" }}
           style={{ originX: 0 }}
         ></motion.div>
       </div>
