@@ -152,11 +152,17 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
     ? (totalRoi / platformMonthlyUsed) * 100
     : 0;
 
+  const grossQuarter = roiBeforeCost * 3;
   const gross6m = roiBeforeCost * 6;
   const gross1y = roiBeforeCost * 12;
 
+  const roiQuarterNet = grossQuarter - platformAnnualUsed;
   const roi6mNet = gross6m - platformAnnualUsed;
   const roi1yNet = gross1y - platformAnnualUsed;
+
+  const roiQuarterPercent = platformAnnualUsed > 0
+    ? (roiQuarterNet / platformAnnualUsed) * 100
+    : 0;
 
   const roi6mPercent = platformAnnualUsed > 0
     ? (roi6mNet / platformAnnualUsed) * 100
@@ -165,6 +171,12 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
   const roi1yPercent = platformAnnualUsed > 0
     ? (roi1yNet / platformAnnualUsed) * 100
     : 0;
+
+  const monthsToRoi = roiBeforeCost > 0
+    ? platformAnnualUsed / roiBeforeCost
+    : 0;
+
+  const quartersToRoi = monthsToRoi / 3;
 
   const paybackMonths = roiBeforeCost > 0
     ? platformAnnualUsed / roiBeforeCost
@@ -196,12 +208,17 @@ export function calculateROI(inputs: ROIInputs): ROICalculations {
     suggestedRG,
     suggestedErrorSavings,
     errorSavings,
+    grossQuarter,
     gross6m,
     gross1y,
+    roiQuarterNet,
     roi6mNet,
     roi1yNet,
+    roiQuarterPercent,
     roi6mPercent,
     roi1yPercent,
+    monthsToRoi,
+    quartersToRoi,
     paybackMonths,
   };
 }

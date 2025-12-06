@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Download, Copy, Check, ChevronDown, ChevronUp } from 'lucide-react';
 import { ROIInputs, ROICalculations } from '../types/roi';
-import { formatCurrency, formatNumber, formatPercent } from '../utils/formatting';
+import { formatCurrency, formatNumber, formatPercent, formatTimeToRoi } from '../utils/formatting';
 import { downloadROIReport, copyROIReportToClipboard } from '../utils/export';
 import { useTheme } from '../contexts/ThemeContext';
 import MetricCard from './MetricCard';
 import GlassCard from './GlassCard';
 
-type RoiView = 'monthly' | 'sixMonths' | 'oneYear';
+type RoiView = 'quarter' | 'sixMonths' | 'oneYear';
 
 interface LiveResultPanelProps {
   inputs: ROIInputs;
@@ -46,13 +46,13 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
   let displayedRoiPercentCaption: string;
 
   switch (roiView) {
-    case 'monthly':
-      displayedRoiValue = calculations.totalRoi;
-      displayedRoiLabel = 'Total ROI ($/month)';
-      displayedRoiCaption = 'Projected monthly ROI after cost';
-      displayedRoiCaptionSubtitle = null;
-      displayedRoiPercent = calculations.roiPercent;
-      displayedRoiPercentCaption = 'Relative to monthly platform cost';
+    case 'quarter':
+      displayedRoiValue = calculations.roiQuarterNet;
+      displayedRoiLabel = 'Total ROI (Quarter)';
+      displayedRoiCaption = 'Projected ROI in the first quarter';
+      displayedRoiCaptionSubtitle = '(after one-time build cost)';
+      displayedRoiPercent = calculations.roiQuarterPercent;
+      displayedRoiPercentCaption = 'Return in first quarter vs one-time build cost';
       break;
     case 'oneYear':
       displayedRoiValue = calculations.roi1yNet;
@@ -60,7 +60,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
       displayedRoiCaption = 'Projected ROI over 12 months';
       displayedRoiCaptionSubtitle = '(after one-time build cost)';
       displayedRoiPercent = calculations.roi1yPercent;
-      displayedRoiPercentCaption = 'Relative to one-time platform cost';
+      displayedRoiPercentCaption = 'Return over 12 months vs one-time build cost';
       break;
     case 'sixMonths':
     default:
@@ -69,7 +69,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
       displayedRoiCaption = 'Projected ROI over 6 months';
       displayedRoiCaptionSubtitle = '(after one-time build cost)';
       displayedRoiPercent = calculations.roi6mPercent;
-      displayedRoiPercentCaption = 'Relative to one-time platform cost';
+      displayedRoiPercentCaption = 'Return over 6 months vs one-time build cost';
       break;
   }
 
@@ -114,14 +114,14 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
 
             <div className="flex gap-1 bg-gray-100/80 rounded-lg p-1 mb-6 w-full">
               <button
-                onClick={() => setRoiView('monthly')}
+                onClick={() => setRoiView('quarter')}
                 className={`flex-1 px-2 py-2 rounded-md text-[10px] font-bold uppercase tracking-wide transition-all whitespace-nowrap min-w-0 ${
-                  roiView === 'monthly'
+                  roiView === 'quarter'
                     ? 'bg-roi-orange text-white shadow-sm'
                     : 'text-gray-600 hover:bg-gray-200/60'
                 }`}
               >
-                Monthly
+                Quarter
               </button>
               <button
                 onClick={() => setRoiView('sixMonths')}
@@ -272,7 +272,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
             onClick={() => setRoiBeforeCostCollapsed(!roiBeforeCostCollapsed)}
           >
             <div className="flex items-center justify-between mb-2">
-              <span className={`text-xs uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>ROI before cost</span>
+              <span className={`text-xs uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarterly ROI before cost</span>
               {roiBeforeCostCollapsed ? (
                 <ChevronDown className={`w-4 h-4 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`} />
               ) : (
@@ -280,17 +280,23 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
               )}
             </div>
             {!roiBeforeCostCollapsed && (
-              <span className={`font-bold text-2xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.roiBeforeCost)}</span>
+              <span className={`font-bold text-2xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.grossQuarter)}</span>
             )}
           </div>
         </div>
         <div className="bg-gradient-to-r from-roi-orange/20 to-transparent p-6 rounded-xl border border-roi-orange/30">
           <div className="flex justify-between items-center mb-3">
             <span className="text-roi-orange font-bold text-xl">Final ROI after cost:</span>
-            <span className="text-roi-orange font-bold text-3xl">{formatCurrency(calculations.totalRoi)}</span>
+            <span className="text-roi-orange font-bold text-3xl">{formatCurrency(calculations.roiQuarterNet)}</span>
           </div>
           <div className={`text-right text-xs ${theme === 'dark' ? 'text-white' : 'text-gray-600'}`}>
-            In 6 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi6mNet)}</span> • In 12 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi1yNet)}</span>
+            In first quarter: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roiQuarterNet)}</span> • In 6 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi6mNet)}</span> • In 12 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi1yNet)}</span>
+          </div>
+        </div>
+        <div className="bg-gradient-to-r from-roi-orange/10 to-transparent p-6 rounded-xl border border-roi-orange/20 mt-4">
+          <div className="flex justify-between items-center">
+            <span className={`font-medium text-base ${theme === 'dark' ? 'text-gray-300' : 'text-roi-text-primary'}`}>Time to ROI (Break-Even Point):</span>
+            <span className={`font-bold text-2xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatTimeToRoi(calculations.monthsToRoi)}</span>
           </div>
         </div>
       </GlassCard>

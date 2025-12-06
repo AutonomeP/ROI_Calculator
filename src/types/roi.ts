@@ -51,11 +51,16 @@ export interface ROICalculations {
   suggestedRG: number;
   suggestedErrorSavings: number;
   errorSavings: number;
+  grossQuarter: number;
   gross6m: number;
   gross1y: number;
+  roiQuarterNet: number;
   roi6mNet: number;
   roi1yNet: number;
+  roiQuarterPercent: number;
   roi6mPercent: number;
   roi1yPercent: number;
+  monthsToRoi: number;
+  quartersToRoi: number;
   paybackMonths: number;
 }
