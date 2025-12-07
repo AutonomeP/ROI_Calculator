@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { ROIInputs, ROIInputStrings, SolutionMode, Complexity } from './types/roi';
-import { calculateROI, getVMByComplexity, getPercentAutomatedByComplexity, getErrorReductionByComplexity } from './utils/calculations';
+import { ROIInputs, ROIInputStrings, SolutionMode, Complexity, AutomationDepth } from './types/roi';
+import { calculateROI, getVMByComplexity, getErrorReductionByComplexity } from './utils/calculations';
 import { useTheme } from './contexts/ThemeContext';
 import InputWizardPanel from './components/InputWizardPanel';
 import LiveResultPanel from './components/LiveResultPanel';
@@ -25,7 +25,7 @@ function App() {
     platformCost: 0,
     complexity: 'moderate',
     solutionMode: 'automation',
-    percentAutomated: 0.25,
+    automationDepth: 'light',
     baselineErrorCostMonthly: 0,
     errorReductionPercent: 0,
     velocityMultiplier: 0,
@@ -42,7 +42,6 @@ function App() {
     opportunityValue: '',
     wls: '3',
     platformCost: '',
-    percentAutomated: '25',
     baselineErrorCostMonthly: '',
     errorReductionPercent: '',
     velocityMultiplier: '',
@@ -54,18 +53,18 @@ function App() {
   const handleInputChange = (field: keyof ROIInputs, value: string | number) => {
     if (field === 'processName') {
       setInputs(prev => ({ ...prev, [field]: value }));
+    } else if (field === 'automationDepth') {
+      setInputs(prev => ({ ...prev, automationDepth: value as AutomationDepth }));
     } else if (field === 'complexity') {
-      // When complexity changes, auto-populate VM, percentAutomated, and errorReduction
+      // When complexity changes, auto-populate VM and errorReduction
       const complexityValue = value as Complexity;
       const newVM = getVMByComplexity(complexityValue);
-      const newPercentAutomated = getPercentAutomatedByComplexity(complexityValue);
       const newErrorReduction = getErrorReductionByComplexity(complexityValue);
 
       setInputs(prev => ({
         ...prev,
         complexity: complexityValue,
         velocityMultiplier: newVM,
-        percentAutomated: newPercentAutomated,
         errorReductionPercent: newErrorReduction,
       }));
 
@@ -73,7 +72,6 @@ function App() {
       setInputStrings(prev => ({
         ...prev,
         velocityMultiplier: newVM.toFixed(2),
-        percentAutomated: (newPercentAutomated * 100).toFixed(0),
         errorReductionPercent: (newErrorReduction * 100).toFixed(0),
       }));
     } else {
@@ -84,7 +82,7 @@ function App() {
       let numericValue = parseFloat(sanitized) || 0;
 
       // Convert percentage fields (0-100) to decimal (0-1)
-      if (field === 'percentAutomated' || field === 'errorReductionPercent') {
+      if (field === 'errorReductionPercent') {
         numericValue = numericValue / 100;
       }
 

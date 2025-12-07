@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ROIInputs, ROIInputStrings, ROICalculations, Complexity } from '../types/roi';
+import { ROIInputs, ROIInputStrings, ROICalculations, Complexity, AutomationDepth } from '../types/roi';
 import FormSection from './FormSection';
 import FormInput from './FormInput';
 import ComplexitySelector from './ComplexitySelector';
+import AutomationDepthSelector from './AutomationDepthSelector';
 import LeverageSlider from './LeverageSlider';
 import CollapsibleInput from './CollapsibleInput';
 import { formatCurrency } from '../utils/formatting';
@@ -25,6 +26,10 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
 
   const handleComplexityChange = (value: Complexity) => {
     onChange('complexity', value);
+  };
+
+  const handleAutomationDepthChange = (value: AutomationDepth) => {
+    onChange('automationDepth', value);
   };
 
   const hasUserEnteredPlatformCost = inputStrings.platformCost && parseFloat(inputStrings.platformCost) > 0;
@@ -70,13 +75,9 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
           onChange={handleChange('tOldMinutes')}
           placeholder="e.g., 30"
         />
-        <FormInput
-          label="% of Task That Can Be Automated"
-          type="number"
-          value={inputStrings.percentAutomated}
-          onChange={handleChange('percentAutomated')}
-          placeholder="e.g., 25"
-          helperText={`Recommended ranges: Simple automation (15-30%) • Complex workflows (25-50%) • Agentic systems (20-40%). Default: 25%`}
+        <AutomationDepthSelector
+          value={inputs.automationDepth}
+          onChange={handleAutomationDepthChange}
         />
         <ComplexitySelector
           value={inputs.complexity}

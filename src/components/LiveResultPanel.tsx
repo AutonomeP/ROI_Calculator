@@ -17,14 +17,18 @@ interface LiveResultPanelProps {
 export default function LiveResultPanel({ inputs, calculations }: LiveResultPanelProps) {
   const { theme } = useTheme();
   const [copied, setCopied] = useState(false);
-  const [roiView, setRoiView] = useState<RoiView>('quarter');
+  const [roiView, setRoiView] = useState<RoiView>(inputs.solutionMode === 'automation' ? 'sixMonths' : 'oneYear');
   const [roiBeforeCostCollapsed, setRoiBeforeCostCollapsed] = useState(true);
   const [scenarioCollapsed, setScenarioCollapsed] = useState(false);
 
   useEffect(() => {
-    // Keep Quarter as default, but suggest different tabs based on mode
+    // Default to 6 months for automation, 1 year for agentic
     // User can still change tabs manually
-    setRoiView('quarter');
+    if (inputs.solutionMode === 'automation') {
+      setRoiView('sixMonths');
+    } else if (inputs.solutionMode === 'agentic') {
+      setRoiView('oneYear');
+    }
   }, [inputs.solutionMode]);
 
   const handleDownload = () => {

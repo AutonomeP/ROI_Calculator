@@ -114,14 +114,12 @@ export function getVMByComplexity(complexity: Complexity): number {
   return vmMap[complexity] || 1.35;
 }
 
-// Helper function to get percentAutomated default based on complexity
-export function getPercentAutomatedByComplexity(complexity: Complexity): number {
-  const percentMap: Record<Complexity, number> = {
-    simple: 0.25,   // 25%
-    moderate: 0.40, // 40%
-    complex: 0.50,  // 50%
-  };
-  return percentMap[complexity] || 0.40;
+// Helper function to get automation share from automation depth
+export function getAutomationShareByDepth(depth: string): number {
+  if (depth === 'light') return 0.25;      // 25%
+  if (depth === 'workflow') return 0.40;   // 40%
+  if (depth === 'agentic') return 0.30;    // 30%
+  return 0.25; // default to light
 }
 
 // Helper function to get error reduction default based on complexity
@@ -137,13 +135,11 @@ export function getErrorReductionByComplexity(complexity: Complexity): number {
 export function calculateROI(inputs: ROIInputs): ROICalculations {
   const tOld = Math.max(inputs.tOldMinutes || 0, 1);
 
-  // STEP 1: Determine percentAutomated based on complexity (or override)
-  const percentAutomated = inputs.percentAutomated > 0
-    ? inputs.percentAutomated
-    : getPercentAutomatedByComplexity(inputs.complexity);
+  // STEP 1: Determine automationShare from automationDepth
+  const automationShare = getAutomationShareByDepth(inputs.automationDepth);
 
   const realizationFactor = 0.85;
-  const timeSavedPerRunMinutes = tOld * percentAutomated * realizationFactor;
+  const timeSavedPerRunMinutes = tOld * automationShare * realizationFactor;
   const tNew = Math.max(tOld - timeSavedPerRunMinutes, 0.5);
 
   // STEP 2: Compute time savings (MS part 1)
