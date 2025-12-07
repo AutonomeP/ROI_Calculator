@@ -57,7 +57,7 @@ export default function ErrorReductionSelector({ value, onChange }: ErrorReducti
       <p className={`text-xs mt-1 leading-relaxed ${
         theme === 'dark' ? 'text-gray-500' : 'text-roi-text-tertiary'
       }`}>
-        We auto-set this from complexity. Most automations reduce errors by ~40–70%.
+        We auto-set this from complexity. Most automations reduce errors by 40–70%.
       </p>
     </div>
   );
