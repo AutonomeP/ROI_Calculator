@@ -183,12 +183,12 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
           />
         </CollapsibleInput>
         <FormInput
-          label="Baseline monthly error cost ($/month)"
+          label="Cost of mistakes per month"
           type="number"
           value={inputStrings.baselineErrorCostMonthly}
           onChange={handleChange('baselineErrorCostMonthly')}
-          placeholder="e.g., 500"
-          helperText="Current monthly cost of mistakes and rework before automation"
+          placeholder="e.g., 5 mistakes × $100 = $500"
+          helperText="Estimate refunds, discounts, redo work, or penalties caused by mistakes in this process each month."
         />
         <ErrorReductionSelector
           value={inputs.errorReductionPreset}
