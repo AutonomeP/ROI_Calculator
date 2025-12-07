@@ -290,17 +290,15 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
             In first quarter: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roiQuarterNet)}</span> • In 6 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi6mNet)}</span> • In 12 months: <span className="text-roi-orange font-semibold">{formatCurrency(calculations.roi1yNet)}</span>
           </div>
         </div>
-        <div className={`p-6 rounded-xl border-2 mt-6 shadow-lg ${
-          calculations.monthsToRoi > 3
-            ? `bg-gradient-to-r ${theme === 'dark' ? 'from-gray-500/15 to-gray-500/5 border-gray-500/30' : 'from-gray-400/10 to-gray-400/5 border-gray-300/30'}`
-            : 'bg-gradient-to-r from-roi-orange/10 to-roi-orange/5 border-roi-orange/30'
+        <div className={`p-6 rounded-xl border-2 mt-6 shadow-lg bg-gradient-to-r ${
+          theme === 'dark'
+            ? 'from-gray-500/15 to-gray-500/5 border-gray-500/30'
+            : 'from-gray-400/10 to-gray-400/5 border-gray-300/30'
         }`}>
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
             <div className="flex flex-col">
               <span className={`text-xs uppercase tracking-wider font-bold mb-1 ${
-                calculations.monthsToRoi > 3
-                  ? (theme === 'dark' ? 'text-gray-400' : 'text-gray-600')
-                  : (theme === 'dark' ? 'text-roi-orange/80' : 'text-roi-orange')
+                theme === 'dark' ? 'text-gray-400' : 'text-gray-600'
               }`}>
                 Time to Value
               </span>
@@ -309,9 +307,7 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
               </span>
             </div>
             <span className={`font-bold text-3xl sm:text-4xl ${
-              calculations.monthsToRoi > 3
-                ? (theme === 'dark' ? 'text-gray-300' : 'text-gray-700')
-                : (theme === 'dark' ? 'text-white' : 'text-roi-text-primary')
+              theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
             }`}>
               {formatTimeToRoi(calculations.monthsToRoi)}
             </span>
