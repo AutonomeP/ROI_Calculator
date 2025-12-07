@@ -378,62 +378,71 @@ export default function LiveResultPanel({ inputs, calculations }: LiveResultPane
               Conservative, base, and optimistic ROI projections based on realization factors
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className={`p-5 rounded-xl border-2 ${theme === 'dark' ? 'bg-white/5 border-roi-orange' : 'bg-white border-roi-orange'}`}>
-                <div className="flex items-center gap-2 mb-4">
-                  <span className={`text-xs uppercase tracking-wider font-bold text-roi-orange`}>Low Case (60%)</span>
+              <div className="scenario-card scenario-card-low p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="w-2 h-2 rounded-full bg-roi-orange animate-pulse"></div>
+                  <span className="text-xs uppercase tracking-[0.15em] font-bold text-roi-orange">Low Case (60%)</span>
                 </div>
-                <div className="space-y-3">
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarter</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCaseQuarterlyROI)}</span>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarter</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCaseQuarterlyROI)}</span>
                   </div>
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>6 Months</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCase6mROI)}</span>
+                  <div className={`border-t ${theme === 'dark' ? 'border-white/10' : 'border-black/10'}`}></div>
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>6 Months</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCase6mROI)}</span>
                   </div>
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>12 Months</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCase1yROI)}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className={`p-5 rounded-xl border ${theme === 'dark' ? 'bg-gray-800 border-gray-700' : 'bg-gray-200 border-gray-300'}`}>
-                <div className="flex items-center gap-2 mb-4">
-                  <span className={`text-xs uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Base Case (80%)</span>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarter</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCaseQuarterlyROI)}</span>
-                  </div>
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>6 Months</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCase6mROI)}</span>
-                  </div>
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>12 Months</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCase1yROI)}</span>
+                  <div className={`border-t ${theme === 'dark' ? 'border-white/10' : 'border-black/10'}`}></div>
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>12 Months</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.lowCase1yROI)}</span>
                   </div>
                 </div>
               </div>
 
-              <div className={`p-5 rounded-xl border ${theme === 'dark' ? 'bg-roi-orange/20 border-roi-orange' : 'bg-roi-orange border-roi-orange'}`}>
-                <div className="flex items-center gap-2 mb-4">
-                  <span className={`text-xs uppercase tracking-wider font-bold ${theme === 'dark' ? 'text-roi-orange' : 'text-white'}`}>High Case (100%)</span>
+              <div className="scenario-card scenario-card-base p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className={`w-2 h-2 rounded-full ${theme === 'dark' ? 'bg-gray-400' : 'bg-gray-600'}`}></div>
+                  <span className={`text-xs uppercase tracking-[0.15em] font-bold ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'}`}>Base Case (80%)</span>
                 </div>
-                <div className="space-y-3">
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-white/80'}`}>Quarter</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-white'}`}>{formatCurrency(calculations.highCaseQuarterlyROI)}</span>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarter</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCaseQuarterlyROI)}</span>
                   </div>
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-white/80'}`}>6 Months</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-white'}`}>{formatCurrency(calculations.highCase6mROI)}</span>
+                  <div className={`border-t ${theme === 'dark' ? 'border-white/10' : 'border-black/10'}`}></div>
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>6 Months</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCase6mROI)}</span>
                   </div>
-                  <div>
-                    <span className={`text-xs block mb-1 ${theme === 'dark' ? 'text-gray-400' : 'text-white/80'}`}>12 Months</span>
-                    <span className={`font-bold text-lg ${theme === 'dark' ? 'text-white' : 'text-white'}`}>{formatCurrency(calculations.highCase1yROI)}</span>
+                  <div className={`border-t ${theme === 'dark' ? 'border-white/10' : 'border-black/10'}`}></div>
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>12 Months</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.baseCase1yROI)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="scenario-card scenario-card-high p-6">
+                <div className="flex items-center gap-2 mb-5">
+                  <div className="w-2 h-2 rounded-full bg-roi-orange animate-pulse"></div>
+                  <span className="text-xs uppercase tracking-[0.15em] font-bold text-roi-orange">High Case (100%)</span>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>Quarter</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.highCaseQuarterlyROI)}</span>
+                  </div>
+                  <div className={`border-t ${theme === 'dark' ? 'border-white/10' : 'border-black/10'}`}></div>
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>6 Months</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.highCase6mROI)}</span>
+                  </div>
+                  <div className={`border-t ${theme === 'dark' ? 'border-white/10' : 'border-black/10'}`}></div>
+                  <div className="flex justify-between items-baseline">
+                    <span className={`text-xs uppercase tracking-wider font-medium ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>12 Months</span>
+                    <span className={`font-bold text-xl ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{formatCurrency(calculations.highCase1yROI)}</span>
                   </div>
                 </div>
               </div>
