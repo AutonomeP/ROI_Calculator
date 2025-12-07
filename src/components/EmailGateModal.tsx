@@ -41,12 +41,12 @@ export default function EmailGateModal() {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4 animate-fadeIn">
-      <div className={`absolute inset-0 backdrop-blur-md ${theme === 'dark' ? 'bg-premium-gradient' : 'bg-premium-gradient-light'}`}>
+      <div className="absolute inset-0 backdrop-blur-md bg-black/95">
         <div className="absolute top-20 left-20 w-96 h-96 bg-orange-glow opacity-30 blur-3xl animate-pulse"></div>
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-orange-glow opacity-20 blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      <div className={`relative z-10 max-w-md w-full p-10 md:p-12 rounded-3xl glass-card ${theme === 'dark' ? 'shadow-premium' : 'shadow-premium-light'} animate-scaleIn`}>
+      <div className="relative z-10 max-w-md w-full p-10 md:p-12 rounded-3xl glass-card shadow-premium animate-scaleIn">
         {!emailSent ? (
           <>
             <div className="flex justify-center mb-8 fade-in stagger-1">
@@ -57,17 +57,17 @@ export default function EmailGateModal() {
             </div>
 
             <div className="text-center mb-10 fade-in stagger-2">
-              <h2 className={`text-4xl md:text-5xl font-black mb-4 leading-tight tracking-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+              <h2 className="text-4xl md:text-5xl font-black mb-4 leading-tight tracking-tight text-white">
                 Access ROI Calculator
               </h2>
-              <p className={`text-base leading-relaxed max-w-sm mx-auto ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+              <p className="text-base leading-relaxed max-w-sm mx-auto text-gray-400">
                 Enter your email to receive a secure access link. Once verified, you can return on this device without re-verifying.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6 fade-in stagger-3">
               <div>
-                <label className={`block text-[10px] uppercase tracking-[0.15em] font-bold mb-3 ${theme === 'dark' ? 'text-gray-500' : 'text-roi-text-secondary/60'}`}>
+                <label className="block text-[10px] uppercase tracking-[0.15em] font-bold mb-3 text-gray-500">
                   Email Address
                 </label>
                 <input
@@ -82,7 +82,7 @@ export default function EmailGateModal() {
               </div>
 
               {error && (
-                <div className={`glass-card p-4 border-2 ${theme === 'dark' ? 'border-red-500/50 bg-red-500/10' : 'border-red-500/30 bg-red-500/5'} animate-shake`}>
+                <div className="glass-card p-4 border-2 border-red-500/50 bg-red-500/10 animate-shake">
                   <p className="text-sm text-red-500 font-medium text-center">
                     {error}
                   </p>
@@ -101,7 +101,7 @@ export default function EmailGateModal() {
               </button>
             </form>
 
-            <div className={`flex items-center justify-center gap-2 mt-8 fade-in stagger-4 ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
+            <div className="flex items-center justify-center gap-2 mt-8 fade-in stagger-4 text-gray-500">
               <Shield size={14} strokeWidth={2} />
               <p className="text-xs font-medium">
                 Secure verification • No spam, ever
@@ -111,27 +111,27 @@ export default function EmailGateModal() {
         ) : (
           <div className="fade-in">
             <div className="flex justify-center mb-8 fade-in stagger-1">
-              <div className={`metric-card p-6 relative overflow-visible ${theme === 'dark' ? 'bg-green-500/20 border-green-500/50' : 'bg-green-500/10 border-green-500/30'}`}>
-                <div className={`absolute inset-0 blur-2xl opacity-50 ${theme === 'dark' ? 'bg-green-500/30' : 'bg-green-500/20'}`}></div>
+              <div className="metric-card p-6 relative overflow-visible bg-green-500/20 border-green-500/50">
+                <div className="absolute inset-0 blur-2xl opacity-50 bg-green-500/30"></div>
                 <CheckCircle size={48} className="text-green-500 relative z-10 animate-scaleIn" strokeWidth={2} />
               </div>
             </div>
 
             <div className="text-center fade-in stagger-2">
-              <h2 className={`text-4xl md:text-5xl font-black mb-6 leading-tight tracking-tight ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+              <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight tracking-tight text-white">
                 Check Your Email
               </h2>
-              <p className={`text-base leading-relaxed mb-6 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+              <p className="text-base leading-relaxed mb-6 text-gray-400">
                 We've sent a verification link to:
               </p>
 
-              <div className={`glass-card p-5 mb-6 border-2 ${theme === 'dark' ? 'border-roi-orange/30' : 'border-roi-orange/20'}`}>
-                <p className={`text-lg font-bold ${theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>
+              <div className="glass-card p-5 mb-6 border-2 border-roi-orange/30">
+                <p className="text-lg font-bold text-white">
                   {email}
                 </p>
               </div>
 
-              <p className={`text-sm leading-relaxed mb-8 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
+              <p className="text-sm leading-relaxed mb-8 text-gray-400">
                 Click the link in your email to access the calculator. This window will automatically update once you verify.
               </p>
             </div>
@@ -142,11 +142,7 @@ export default function EmailGateModal() {
                 setEmail('');
                 setError(null);
               }}
-              className={`glass-card w-full mt-6 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-300 hover:scale-[1.02] ${
-                theme === 'dark'
-                  ? 'text-white hover:border-white/30'
-                  : 'text-roi-text-primary hover:border-black/20'
-              }`}
+              className="glass-card w-full mt-6 px-6 py-4 text-sm font-bold uppercase tracking-wider transition-all duration-300 hover:scale-[1.02] text-white hover:border-white/30"
             >
               Use Different Email
             </button>
