@@ -50,9 +50,9 @@ type PlatformCostResult = {
  *  - solutionMode: 'automation' or 'agentic' to apply payback window
  *
  * Logic:
- *  - baselineAnnualCost = monthlyValue * 12 * 0.20   // 20% baseline
- *  - maxCost = monthlyValue * (automation: 3, agentic: 4)
- *  - suggestedAnnualCost = min(baselineAnnualCost, maxCost)
+ *  - Automation projects: priced at 3 months of monthly value
+ *  - Agentic projects: priced at 4 months of monthly value
+ *  - suggestedAnnualCost = monthlyValue * payback months
  *  - suggestedMonthlyEquivalent = suggestedAnnualCost / 12
  *
  *  - If userOverrideAnnual > 0, we use that as platformAnnualUsed
@@ -78,14 +78,9 @@ export function calculatePlatformCost(
     };
   }
 
-  // Baseline: 20% of annual value.
-  const baselineAnnualCost = monthlyValue * 12 * 0.20;
-
-  // Cap: recoup in ≤ 3 months (automation) or 4 months (agentic).
-  const paybackMonthsLimit = solutionMode === 'automation' ? 3 : 4;
-  const maxCost = monthlyValue * paybackMonthsLimit;
-
-  const suggestedAnnualCost = Math.min(baselineAnnualCost, maxCost);
+  // Simple payback-based pricing: 3 months for automation, 4 months for agentic
+  const paybackMonths = solutionMode === 'automation' ? 3 : 4;
+  const suggestedAnnualCost = monthlyValue * paybackMonths;
   const suggestedMonthlyEquivalent = suggestedAnnualCost / 12;
 
   // If user typed a custom TOTAL price, honor override.
@@ -127,7 +122,7 @@ export function getErrorReductionByComplexity(complexity: Complexity): number {
   const errorMap: Record<Complexity, number> = {
     simple: 0.40,   // 40%
     moderate: 0.50, // 50%
-    complex: 0.60,  // 60%
+    complex: 0.70,  // 70%
   };
   return errorMap[complexity] || 0.50;
 }

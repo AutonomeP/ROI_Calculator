@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { ROIInputs, ROIInputStrings, ROICalculations, Complexity, AutomationDepth } from '../types/roi';
+import { ROIInputs, ROIInputStrings, ROICalculations, Complexity, AutomationDepth, ErrorReductionPreset } from '../types/roi';
 import FormSection from './FormSection';
 import FormInput from './FormInput';
 import ComplexitySelector from './ComplexitySelector';
 import AutomationDepthSelector from './AutomationDepthSelector';
 import LeverageSlider from './LeverageSlider';
 import CollapsibleInput from './CollapsibleInput';
+import ErrorReductionSelector from './ErrorReductionSelector';
 import { formatCurrency } from '../utils/formatting';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -14,9 +15,10 @@ interface InputWizardPanelProps {
   inputStrings: ROIInputStrings;
   calculations: ROICalculations;
   onChange: (field: keyof ROIInputs, value: string | number) => void;
+  onErrorReductionPresetChange: (preset: ErrorReductionPreset) => void;
 }
 
-export default function InputWizardPanel({ inputs, inputStrings, calculations, onChange }: InputWizardPanelProps) {
+export default function InputWizardPanel({ inputs, inputStrings, calculations, onChange, onErrorReductionPresetChange }: InputWizardPanelProps) {
   const { theme } = useTheme();
   const [platformCostOverrideEnabled, setPlatformCostOverrideEnabled] = useState(false);
 
@@ -38,7 +40,6 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
     ? `Your price: ${formatCurrency(calculations.platformAnnual, 2)} total (${formatCurrency(calculations.platformMonthly, 2)}/month over 12 months). Suggested: ${formatCurrency(calculations.suggestedPlatformAnnual, 2)} total`
     : `Suggested: ${formatCurrency(calculations.suggestedPlatformAnnual, 2)} total (${formatCurrency(calculations.suggestedPlatformMonthly, 2)}/month over 12 months)`;
 
-  const errorSavingsHelperText = `Auto-estimated: ${formatCurrency(calculations.suggestedErrorSavings, 2)}/month (based on complexity)`;
   const revenueGeneratedHelperText = `Suggested: ${formatCurrency(calculations.suggestedRG, 2)}/month (10% of direct savings)`;
   const opportunityValueHelperText = `Suggested: ${formatCurrency(calculations.suggestedOC, 2)}/month (15% of direct savings)`;
 
@@ -164,38 +165,34 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
 
       <FormSection
         title="Direct Savings"
-        helperText="We auto-estimate error reduction based on workflow complexity. Override any value if needed."
+        helperText="Calculate savings from reduced errors, time saved, and eliminated costs"
         collapsible={true}
         defaultCollapsed={false}
       >
         <CollapsibleInput
-          label="Error Savings (Customize)"
+          label="Savings from tools / contractors (optional)"
           defaultCollapsed={true}
         >
           <FormInput
-            label="Baseline Monthly Error Cost ($/month)"
+            label="Monthly savings from tools/contractors"
             type="number"
-            value={inputStrings.baselineErrorCostMonthly}
-            onChange={handleChange('baselineErrorCostMonthly')}
-            placeholder="e.g., 500"
-            helperText="Current monthly cost of errors before automation"
-          />
-          <FormInput
-            label="Expected Error Reduction (%)"
-            type="number"
-            value={inputStrings.errorReductionPercent}
-            onChange={handleChange('errorReductionPercent')}
-            placeholder={`Auto: ${(calculations.calculatedErrorReductionPercent * 100).toFixed(0)}%`}
-            helperText={`Defaults: Simple (40%), Moderate (50%), Complex (60%)`}
+            value={inputStrings.toolSavings}
+            onChange={handleChange('toolSavings')}
+            placeholder="e.g., 200"
+            helperText="Licenses, agencies, or services you can reduce or remove"
           />
         </CollapsibleInput>
         <FormInput
-          label="Savings from Tools/Contractors ($/month)"
+          label="Baseline monthly error cost ($/month)"
           type="number"
-          value={inputStrings.toolSavings}
-          onChange={handleChange('toolSavings')}
-          placeholder="e.g., 200"
-          helperText="Monthly savings from tools or services you'll no longer need"
+          value={inputStrings.baselineErrorCostMonthly}
+          onChange={handleChange('baselineErrorCostMonthly')}
+          placeholder="e.g., 500"
+          helperText="Current monthly cost of mistakes and rework before automation"
+        />
+        <ErrorReductionSelector
+          value={inputs.errorReductionPreset}
+          onChange={onErrorReductionPresetChange}
         />
       </FormSection>
 

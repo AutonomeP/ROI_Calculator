@@ -1,6 +1,7 @@
 export type Complexity = 'simple' | 'moderate' | 'complex';
 export type SolutionMode = 'automation' | 'agentic';
 export type AutomationDepth = 'light' | 'workflow' | 'agentic';
+export type ErrorReductionPreset = 'conservative' | 'typical' | 'aggressive';
 
 export interface ROIInputs {
   processName: string;
@@ -18,6 +19,7 @@ export interface ROIInputs {
   automationDepth: AutomationDepth;
   baselineErrorCostMonthly: number;
   errorReductionPercent: number;
+  errorReductionPreset: ErrorReductionPreset;
   velocityMultiplier: number;
   monthlyRunCost: number;
 }
@@ -33,7 +35,6 @@ export interface ROIInputStrings {
   wls: string;
   platformCost: string;
   baselineErrorCostMonthly: string;
-  errorReductionPercent: string;
   velocityMultiplier: string;
   monthlyRunCost: string;
 }

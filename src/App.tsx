@@ -1,17 +1,19 @@
 import { useState, useMemo } from 'react';
 import { Sun, Moon } from 'lucide-react';
-import { ROIInputs, ROIInputStrings, SolutionMode, Complexity, AutomationDepth } from './types/roi';
+import { ROIInputs, ROIInputStrings, SolutionMode, Complexity, AutomationDepth, ErrorReductionPreset } from './types/roi';
 import { calculateROI, getVMByComplexity, getErrorReductionByComplexity } from './utils/calculations';
 import { useTheme } from './contexts/ThemeContext';
 import InputWizardPanel from './components/InputWizardPanel';
 import LiveResultPanel from './components/LiveResultPanel';
 import ModeSelectionModal from './components/ModeSelectionModal';
 import LogoLoadingOverlay from './components/LogoLoadingOverlay';
+import { getPercentFromPreset } from './components/ErrorReductionSelector';
 
 function App() {
   const { theme, toggleTheme } = useTheme();
   const [hasChosenMode, setHasChosenMode] = useState(false);
   const [showLogoLoading, setShowLogoLoading] = useState(false);
+  const [userHasSelectedErrorReduction, setUserHasSelectedErrorReduction] = useState(false);
   const [inputs, setInputs] = useState<ROIInputs>({
     processName: '',
     tOldMinutes: 0,
@@ -27,7 +29,8 @@ function App() {
     solutionMode: 'automation',
     automationDepth: 'light',
     baselineErrorCostMonthly: 0,
-    errorReductionPercent: 0,
+    errorReductionPercent: 0.50,
+    errorReductionPreset: 'typical',
     velocityMultiplier: 0,
     monthlyRunCost: 0,
   });
@@ -43,12 +46,32 @@ function App() {
     wls: '3',
     platformCost: '',
     baselineErrorCostMonthly: '',
-    errorReductionPercent: '',
     velocityMultiplier: '',
     monthlyRunCost: '',
   });
 
   const calculations = useMemo(() => calculateROI(inputs), [inputs]);
+
+  // Helper to determine error reduction preset from complexity and solution mode
+  const getDefaultErrorReductionPreset = (complexity: Complexity, solutionMode: SolutionMode): ErrorReductionPreset => {
+    if (solutionMode === 'agentic') {
+      return 'aggressive';
+    }
+    if (complexity === 'simple') return 'conservative';
+    if (complexity === 'moderate') return 'typical';
+    if (complexity === 'complex') return 'aggressive';
+    return 'typical';
+  };
+
+  const handleErrorReductionPresetChange = (preset: ErrorReductionPreset) => {
+    setUserHasSelectedErrorReduction(true);
+    const percent = getPercentFromPreset(preset) / 100;
+    setInputs(prev => ({
+      ...prev,
+      errorReductionPreset: preset,
+      errorReductionPercent: percent,
+    }));
+  };
 
   const handleInputChange = (field: keyof ROIInputs, value: string | number) => {
     if (field === 'processName') {
@@ -56,35 +79,36 @@ function App() {
     } else if (field === 'automationDepth') {
       setInputs(prev => ({ ...prev, automationDepth: value as AutomationDepth }));
     } else if (field === 'complexity') {
-      // When complexity changes, auto-populate VM and errorReduction
+      // When complexity changes, auto-populate VM and errorReduction (only if user hasn't manually selected)
       const complexityValue = value as Complexity;
       const newVM = getVMByComplexity(complexityValue);
-      const newErrorReduction = getErrorReductionByComplexity(complexityValue);
 
-      setInputs(prev => ({
-        ...prev,
+      const updates: Partial<ROIInputs> = {
         complexity: complexityValue,
         velocityMultiplier: newVM,
-        errorReductionPercent: newErrorReduction,
-      }));
+      };
+
+      // Only auto-update error reduction if user hasn't manually selected
+      if (!userHasSelectedErrorReduction) {
+        const newPreset = getDefaultErrorReductionPreset(complexityValue, inputs.solutionMode);
+        const newErrorReduction = getPercentFromPreset(newPreset) / 100;
+        updates.errorReductionPreset = newPreset;
+        updates.errorReductionPercent = newErrorReduction;
+      }
+
+      setInputs(prev => ({ ...prev, ...updates }));
 
       // Update string values for display
       setInputStrings(prev => ({
         ...prev,
         velocityMultiplier: newVM.toFixed(2),
-        errorReductionPercent: (newErrorReduction * 100).toFixed(0),
       }));
     } else {
       const stringValue = typeof value === 'string' ? value : value.toString();
       setInputStrings(prev => ({ ...prev, [field]: stringValue }));
 
       const sanitized = stringValue.replace(/[^0-9.]/g, '');
-      let numericValue = parseFloat(sanitized) || 0;
-
-      // Convert percentage fields (0-100) to decimal (0-1)
-      if (field === 'errorReductionPercent') {
-        numericValue = numericValue / 100;
-      }
+      const numericValue = parseFloat(sanitized) || 0;
 
       setInputs(prev => ({ ...prev, [field]: numericValue }));
     }
@@ -101,7 +125,19 @@ function App() {
   };
 
   const handleModeChange = (mode: SolutionMode) => {
-    setInputs(prev => ({ ...prev, solutionMode: mode }));
+    const updates: Partial<ROIInputs> = {
+      solutionMode: mode,
+    };
+
+    // Only auto-update error reduction if user hasn't manually selected
+    if (!userHasSelectedErrorReduction && mode === 'agentic') {
+      const newPreset = 'aggressive';
+      const newErrorReduction = getPercentFromPreset(newPreset) / 100;
+      updates.errorReductionPreset = newPreset;
+      updates.errorReductionPercent = newErrorReduction;
+    }
+
+    setInputs(prev => ({ ...prev, ...updates }));
   };
 
   const modeSubtitle =
@@ -191,6 +227,7 @@ function App() {
               inputStrings={inputStrings}
               calculations={calculations}
               onChange={handleInputChange}
+              onErrorReductionPresetChange={handleErrorReductionPresetChange}
             />
           </div>
 
