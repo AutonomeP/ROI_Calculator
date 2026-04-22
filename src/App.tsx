@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react';
 import { Sun, Moon } from 'lucide-react';
 import { ROIInputs, ROIInputStrings, SolutionMode, Complexity, AutomationDepth, ErrorReductionPreset } from './types/roi';
-import { calculateROI, getVMByComplexity, getErrorReductionByComplexity } from './utils/calculations';
+import { calculateROIVnext as calculateROI } from './utils/adapter';
+import { getVMByComplexity } from './utils/constants';
 import { useTheme } from './contexts/ThemeContext';
 import InputWizardPanel from './components/InputWizardPanel';
 import LiveResultPanel from './components/LiveResultPanel';
