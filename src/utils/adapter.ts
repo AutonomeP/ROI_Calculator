@@ -28,7 +28,7 @@ function automationCoverageFromDepth(depth: string): number {
   switch (depth) {
     case 'light':    return 0.25;  // conservative — humans drive most of the workflow
     case 'workflow': return 0.45;  // expected — most of end-to-end is automated
-    case 'agentic':  return 0.65;  // aggressive — AI reasons, routes, orchestrates
+    case 'agentic':  return 0.30;  // AI creates value through reasoning/orchestration; multiplier carries the rest
     default:         return 0.25;
   }
 }
@@ -61,6 +61,14 @@ export function legacyToVnext(inputs: ROIInputs): RoiInputPayload {
     inputs.velocityMultiplier > 0
       ? inputs.velocityMultiplier
       : VM_BY_COMPLEXITY[inputs.complexity] ?? 1.35;
+
+  // Effort index: drives price floors and effort adjustment in calculateServicePrice.
+  const EFFORT_INDEX_BY_COMPLEXITY: Record<string, number> = {
+    simple:   1.5,
+    moderate: 2.0,
+    complex:  2.5,
+  };
+  const effortIndex = EFFORT_INDEX_BY_COMPLEXITY[inputs.complexity] ?? 2.0;
 
   // Map user-entered OC and RG (monthly) into vNext growth inputs (annual).
   // The engine applies adoption, so we divide by adoption to preserve the
@@ -125,6 +133,7 @@ export function legacyToVnext(inputs: ROIInputs): RoiInputPayload {
     solution_mode:
       inputs.solutionMode === 'agentic' ? 'agentic_intelligent_ai' : 'automation',
     automation_depth: inputs.automationDepth,
+    effort_index: effortIndex,
   };
 }
 

@@ -24,6 +24,7 @@ import {
   WLS_RUBRIC_WEIGHTS,
   VM_BOUNDS,
   REDEPLOY_FACTOR_CAP_NO_PLAN,
+  AGENTIC_VALUE_MULTIPLIER,
   clamp,
 } from './constants';
 
@@ -185,7 +186,12 @@ export function computeInitiativeROI(input: RoiInputPayload): RoiComputedResult 
   const wlsMultiplier = getWlsMultiplier(wlsScore);
 
   // --- Compounded value ---
-  const compoundedValue = (directSavings + growthValue * vm) * wlsMultiplier;
+  const compoundedBase = (directSavings + growthValue * vm) * wlsMultiplier;
+  // Agentic systems create compoundly more leverage than rule-based automation.
+  const compoundedValue =
+    input.solution_mode === 'agentic_intelligent_ai'
+      ? compoundedBase * AGENTIC_VALUE_MULTIPLIER
+      : compoundedBase;
 
   // --- Effort ---
   let effort: EffortResult;

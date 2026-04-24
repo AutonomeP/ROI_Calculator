@@ -56,7 +56,7 @@ export default function AutomationDepthSelector({ value, onChange }: AutomationD
         ))}
       </div>
       <p className={`text-xs mt-2 leading-relaxed ${theme === 'dark' ? 'text-gray-500' : 'text-roi-text-tertiary'}`}>
-        Typical automation coverage: Light ≈25%, Workflow ≈45%, Agentic ≈65% of the task.
+        Typical automation coverage: Light ≈25%, Workflow ≈45%, Agentic ≈30% direct (AI value multiplier applied separately).
       </p>
     </div>
   );

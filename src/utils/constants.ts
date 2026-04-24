@@ -104,6 +104,11 @@ export const DEFAULT_EFFORT_INDEX = 2.0;
 // ---------------------------------------------------------------------------
 // Service pricing
 // ---------------------------------------------------------------------------
+
+// Agentic systems create compoundly more leverage than rule-based automation.
+// Matches the legacy AGENTIC_MULTIPLIER from calculations.ts.
+export const AGENTIC_VALUE_MULTIPLIER = 2.1107;
+
 export const PRICING_BASE_MONTHS = {
   automation: 2.8,
   agentic_intelligent_ai: 3.8,
