@@ -1,3 +1,4 @@
+import { useTheme } from '../contexts/ThemeContext';
 import { formatCurrency } from '../utils/formatting';
 import type { SystemResult } from '../types/chat';
 
@@ -6,6 +7,8 @@ interface SummaryBarProps {
 }
 
 export function SummaryBar({ systems }: SummaryBarProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const totalServicePrice = systems.reduce((sum, s) => sum + s.servicePrice, 0);
   const totalMonthlyValue = systems.reduce((sum, s) => sum + s.roiResult.monthly_leveraged_value, 0);
   const totalYear1Net = systems.reduce((sum, s) => sum + s.roiResult.year1_net, 0);
@@ -22,12 +25,12 @@ export function SummaryBar({ systems }: SummaryBarProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-4">
-      {metrics.map((m) => (
-        <div key={m.label} className="bg-white/5 border border-white/10 rounded-xl p-4 text-center">
-          <div className="text-xl font-black text-orange-400">{m.value}</div>
-          <div className="text-white/80 text-xs font-semibold mt-1">{m.label}</div>
-          <div className="text-white/40 text-xs">{m.sub}</div>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 py-5">
+      {metrics.map((m, index) => (
+        <div key={m.label} className={`brand-subtle-card p-4 ${index === 2 ? 'border-roi-red/30 bg-roi-red/5' : ''}`}>
+          <div className={`text-xl font-black ${index === 2 ? 'text-roi-red' : isDark ? 'text-white' : 'text-black'}`}>{m.value}</div>
+          <div className={`text-xs font-bold mt-2 ${isDark ? 'text-white/75' : 'text-black/70'}`}>{m.label}</div>
+          <div className={`text-xs mt-0.5 ${isDark ? 'text-white/40' : 'text-black/40'}`}>{m.sub}</div>
         </div>
       ))}
     </div>
