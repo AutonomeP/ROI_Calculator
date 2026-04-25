@@ -11,6 +11,7 @@ export default {
         'roi-orange-glow': '#FDC500',
         'roi-red': '#CC0000',
         'roi-red-deep': '#8F0000',
+        'roi-accent': '#FF6B3D',
         'roi-yellow': '#FDC500',
         'roi-yellow-soft': '#FFF7CC',
         'roi-light-bg': '#F8F7F3',
@@ -37,6 +38,25 @@ export default {
         'premium-light-hover': '0px 4px 20px rgba(0, 0, 0, 0.10)',
         'orange-glow': '0 0 40px rgba(255, 60, 0, 0.3), 0 0 20px rgba(255, 60, 0, 0.2)',
         'orange-glow-lg': '0 0 60px rgba(255, 60, 0, 0.4), 0 0 30px rgba(255, 60, 0, 0.3)',
+        'logo-glow': '0 0 20px rgba(204, 0, 0, 0.15), 0 8px 24px rgba(0,0,0,0.12)',
+        'cta-glow': '0 0 30px rgba(204, 0, 0, 0.35), 0 8px 24px rgba(204, 0, 0, 0.2)',
+        'cta-glow-hover': '0 0 50px rgba(204, 0, 0, 0.5), 0 12px 32px rgba(204, 0, 0, 0.3)',
+      },
+      animation: {
+        'pulse-slow': 'pulse 3s ease-in-out infinite',
+        'shimmer': 'shimmer 2.5s linear infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'ping-slow': 'ping 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
+        },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-8px)' },
+        },
       },
     },
   },

@@ -571,4 +571,140 @@
   .scenario-card-high:hover::before {
     width: 6px;
   }
+
+  /* ── Premium typing indicator ── */
+  .typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--brand-red);
+    animation: typingBounce 1.4s ease-in-out infinite;
+    opacity: 0.4;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* ── Message entrance animation ── */
+  .message-enter {
+    animation: msgEnter 0.38s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+  }
+
+  @keyframes msgEnter {
+    from { opacity: 0; transform: translateY(10px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* ── Shimmer gradient text (hero heading accent) ── */
+  .shimmer-text {
+    background: linear-gradient(90deg, #CC0000 0%, #FDC500 40%, #CC0000 80%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 0% center; }
+    100% { background-position: 200% center; }
+  }
+
+  /* ── Session badge glow variants ── */
+  .session-badge-single {
+    border-color: rgba(204, 0, 0, 0.45) !important;
+    box-shadow: 0 0 14px rgba(204, 0, 0, 0.22);
+  }
+
+  .session-badge-platform {
+    border-color: rgba(253, 197, 0, 0.45) !important;
+    box-shadow: 0 0 14px rgba(253, 197, 0, 0.22);
+  }
+
+  /* ── Premium CTA glow button ── */
+  .cta-glow {
+    box-shadow: 0 0 30px rgba(204, 0, 0, 0.35), 0 8px 24px rgba(204, 0, 0, 0.2);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+
+  .cta-glow:hover {
+    box-shadow: 0 0 50px rgba(204, 0, 0, 0.5), 0 12px 32px rgba(204, 0, 0, 0.3);
+  }
+
+  /* ── Floating animation (logo bob) ── */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-8px); }
+  }
+
+  /* ── Starter prompt card premium hover ── */
+  .prompt-card {
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, background 0.25s ease;
+  }
+
+  .prompt-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--brand-red), var(--brand-yellow));
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .prompt-card:hover::before {
+    transform: scaleY(1);
+  }
+
+  [data-theme='dark'] .prompt-card:hover {
+    border-color: rgba(204, 0, 0, 0.35) !important;
+    box-shadow: 0 4px 20px rgba(204, 0, 0, 0.12), 0 0 0 1px rgba(204, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.09) !important;
+  }
+
+  [data-theme='light'] .prompt-card:hover {
+    border-color: rgba(204, 0, 0, 0.28) !important;
+    box-shadow: 0 4px 16px rgba(204, 0, 0, 0.1);
+    background: rgba(204, 0, 0, 0.03) !important;
+  }
+
+  /* ── Header glass blur ── */
+  .header-glass {
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+  }
+
+  /* ── Keyboard hint fade ── */
+  .kbd-hint {
+    animation: kbdFadeOut 3s ease forwards;
+    animation-delay: 1.5s;
+  }
+
+  @keyframes kbdFadeOut {
+    0%   { opacity: 1; }
+    100% { opacity: 0; pointer-events: none; }
+  }
+
+  /* ── Subtle send button pulse when active ── */
+  .send-active {
+    animation: sendPulse 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes sendPulse {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(0.88); }
+    100% { transform: scale(1); }
+  }
 }
