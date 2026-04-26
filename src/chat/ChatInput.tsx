@@ -62,18 +62,8 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const hasValue = value.trim().length > 0;
 
   return (
-    <div className={`relative border-t backdrop-blur-xl ${isDark ? 'border-white/[0.08] bg-black/55' : 'border-black/[0.07] bg-white/80'}`}>
-      {/* Keyboard hint */}
-      <motion.div
-        className={`absolute -top-6 left-4 text-[10px] pointer-events-none select-none ${isDark ? 'text-white/30' : 'text-black/30'}`}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: showKbdHint ? 1 : 0 }}
-        transition={{ duration: 0.25 }}
-      >
-        Shift + Enter for new line
-      </motion.div>
-
-      <div className="flex items-end gap-3 p-3.5 sm:p-4">
+    <div className={`relative ${isDark ? 'bg-transparent' : 'bg-transparent'}`}>
+      <div className="flex items-end gap-3 p-4 sm:p-6">
         <textarea
           ref={textareaRef}
           value={value}
@@ -85,37 +75,36 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           disabled={disabled}
           placeholder={disabled ? 'Thinking…' : 'Type a message…'}
           rows={1}
-          className={`flex-1 resize-none rounded-xl border px-4 py-3 text-sm focus:outline-none transition-all duration-200 disabled:opacity-50 ${
+          className={`flex-1 resize-none rounded-2xl border px-5 py-4 text-sm focus:outline-none transition-all duration-300 disabled:opacity-50 ${
             isDark
-              ? `bg-white/[0.08] border-white/[0.14] text-white placeholder-white/35 ${focused ? 'border-roi-red/50 shadow-[0_0_0_3px_rgba(204,0,0,0.12),inset_0_2px_4px_rgba(0,0,0,0.15)]' : 'hover:border-white/22 hover:bg-white/[0.1]'}`
-              : `bg-white border-black/[0.12] text-black placeholder-black/30 ${focused ? 'border-roi-red/40 shadow-[0_0_0_3px_rgba(204,0,0,0.1)]' : 'hover:border-black/20'}`
+              ? `bg-white/[0.05] border-white/10 text-white placeholder-white/20 ${focused ? 'border-autonome-blue bg-white/[0.08] shadow-[0_0_20px_rgba(0,82,255,0.1)]' : 'hover:bg-white/[0.07]'}`
+              : `bg-black/[0.02] border-black/10 text-black placeholder-black/25 ${focused ? 'border-autonome-blue bg-white shadow-xl' : 'hover:bg-black/[0.04]'}`
           }`}
         />
 
         <motion.button
           onClick={handleSend}
           disabled={disabled || !hasValue}
-          whileHover={!disabled && hasValue ? { scale: 1.08, y: -1 } : {}}
-          whileTap={!disabled && hasValue ? { scale: 0.9 } : {}}
-          className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${
+          whileHover={!disabled && hasValue ? { scale: 1.05 } : {}}
+          whileTap={!disabled && hasValue ? { scale: 0.95 } : {}}
+          className={`flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 ${
             hasValue && !disabled
-              ? 'bg-gradient-to-br from-roi-red to-roi-red-deep shadow-cta-glow text-white'
+              ? 'bg-autonome-blue text-white shadow-lg'
               : isDark
-                ? 'bg-white/[0.08] border border-white/12 text-white/30'
-                : 'bg-black/[0.06] border border-black/10 text-black/30'
+                ? 'bg-white/[0.05] text-white/20'
+                : 'bg-black/[0.05] text-black/20'
           } disabled:cursor-not-allowed`}
           aria-label="Send message"
         >
           {disabled ? (
-            /* shimmer spinner when processing */
             <motion.div
-              className="w-4 h-4 rounded-full border-2 border-t-transparent"
-              style={{ borderColor: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)', borderTopColor: 'transparent' }}
+              className="w-5 h-5 rounded-full border-2 border-t-transparent"
+              style={{ borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(0,0,0,0.1)', borderTopColor: isDark ? '#fff' : '#000' }}
               animate={{ rotate: 360 }}
-              transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
+              transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
             />
           ) : (
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5" />
           )}
         </motion.button>
       </div>

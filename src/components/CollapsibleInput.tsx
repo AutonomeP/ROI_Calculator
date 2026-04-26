@@ -28,7 +28,7 @@ export default function CollapsibleInput({
       >
         <h4 className={`text-base font-semibold transition-colors ${
           isCollapsed
-            ? 'text-roi-orange'
+            ? 'text-autonome-blue'
             : theme === 'dark' ? 'text-white' : 'text-roi-text-primary'
         }`}>
           {label}
@@ -37,8 +37,8 @@ export default function CollapsibleInput({
           type="button"
           className={`transition-colors p-1 ${
             theme === 'dark'
-              ? 'text-gray-400 hover:text-roi-orange'
-              : 'text-roi-text-secondary hover:text-roi-orange'
+              ? 'text-gray-400 hover:text-autonome-blue'
+              : 'text-roi-text-secondary hover:text-autonome-blue'
           }`}
           aria-label={isCollapsed ? 'Expand' : 'Collapse'}
         >

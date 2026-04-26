@@ -27,8 +27,8 @@ export function SummaryBar({ systems }: SummaryBarProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 py-5">
       {metrics.map((m, index) => (
-        <div key={m.label} className={`brand-subtle-card p-4 ${index === 2 ? 'border-roi-red/30 bg-roi-red/5' : ''}`}>
-          <div className={`text-xl font-black ${index === 2 ? 'text-roi-red' : isDark ? 'text-white' : 'text-black'}`}>{m.value}</div>
+        <div key={m.label} className={`brand-subtle-card p-4 ${index === 2 ? 'border-autonome-blue/30 bg-autonome-blue/5' : ''}`}>
+          <div className={`text-xl font-black ${index === 2 ? 'text-autonome-blue' : isDark ? 'text-white' : 'text-black'}`}>{m.value}</div>
           <div className={`text-xs font-bold mt-2 ${isDark ? 'text-white/75' : 'text-black/70'}`}>{m.label}</div>
           <div className={`text-xs mt-0.5 ${isDark ? 'text-white/40' : 'text-black/40'}`}>{m.sub}</div>
         </div>

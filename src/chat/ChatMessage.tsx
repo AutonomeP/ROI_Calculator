@@ -23,19 +23,19 @@ export function ChatMessage({ message }: ChatMessageProps) {
     >
       {/* Assistant avatar */}
       {!isUser && (
-        <div className={`flex-shrink-0 w-8 h-8 rounded-xl border flex items-center justify-center mr-3 mt-1 overflow-hidden ring-1 ring-roi-red/15 shadow-sm ${isDark ? 'bg-black border-white/10' : 'bg-white border-black/10'}`}>
+        <div className={`flex-shrink-0 w-8 h-8 rounded-xl border flex items-center justify-center mr-3 mt-1 overflow-hidden ring-1 ring-autonome-blue/15 shadow-sm ${isDark ? 'bg-black border-white/10' : 'bg-white border-black/10'}`}>
           <img src={logo} alt="" className="h-7 w-7 object-contain scale-[1.55]" />
         </div>
       )}
 
       <div className="flex flex-col gap-1 max-w-[82%]">
         <div
-          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+          className={`rounded-2xl px-5 py-3.5 text-sm leading-relaxed whitespace-pre-wrap ${
             isUser
-              ? 'bg-gradient-to-br from-roi-red to-roi-red-deep text-white shadow-[0_4px_20px_rgba(204,0,0,0.28)] rounded-tr-sm'
+              ? 'bg-autonome-blue text-white shadow-lg rounded-tr-sm'
               : isDark
-                ? 'bg-white/[0.07] text-white/90 border border-white/[0.12] backdrop-blur-sm rounded-tl-sm'
-                : 'bg-white/92 text-black/84 border border-black/[0.09] shadow-md rounded-tl-sm'
+                ? 'bg-white/[0.06] text-white/90 border border-white/10 rounded-tl-sm'
+                : 'bg-black/[0.03] text-black/90 border border-black/5 rounded-tl-sm'
           }`}
         >
           {message.content}

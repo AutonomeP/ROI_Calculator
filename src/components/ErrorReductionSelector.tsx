@@ -39,7 +39,7 @@ export default function ErrorReductionSelector({ value, onChange }: ErrorReducti
             onClick={() => onChange(option.value)}
             className={`flex-1 px-4 py-2.5 rounded-md text-sm font-semibold transition-all ${
               value === option.value
-                ? 'bg-roi-orange text-white shadow-md'
+                ? 'bg-autonome-blue text-white shadow-md'
                 : theme === 'dark'
                   ? 'text-gray-400 hover:text-white hover:bg-white/10'
                   : 'text-roi-text-primary hover:bg-gray-200'

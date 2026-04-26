@@ -109,7 +109,7 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
             Velocity Multiplier (VM)
           </label>
           <div className="p-4">
-            <div className="text-3xl font-black text-roi-orange mb-2">
+            <div className="text-3xl font-black text-autonome-blue mb-2">
               {calculations.vm.toFixed(2)}×
             </div>
             <p className="text-xs text-gray-400 leading-relaxed">
@@ -132,7 +132,7 @@ export default function InputWizardPanel({ inputs, inputStrings, calculations, o
               <button
                 type="button"
                 onClick={() => setPlatformCostOverrideEnabled(true)}
-                className="text-xs text-roi-orange hover:underline font-semibold"
+                className="text-xs text-autonome-blue hover:underline font-semibold"
               >
                 Override build cost →
               </button>

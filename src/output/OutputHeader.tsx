@@ -41,9 +41,9 @@ export function OutputHeader({ clientName, onClientNameChange, systemCount, sess
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && save()}
-                  className={`text-3xl font-black bg-transparent border-b-2 border-roi-red outline-none ${isDark ? 'text-white' : 'text-black'}`}
+                  className={`text-3xl font-black bg-transparent border-b-2 border-autonome-blue outline-none ${isDark ? 'text-white' : 'text-black'}`}
                 />
-                <button onClick={save} className="text-roi-red hover:text-roi-red-deep" aria-label="Save client name">
+                <button onClick={save} className="text-autonome-blue hover:text-autonome-blue-deep" aria-label="Save client name">
                   <Check className="w-5 h-5" />
                 </button>
               </>
@@ -67,7 +67,7 @@ export function OutputHeader({ clientName, onClientNameChange, systemCount, sess
 
         <div className="flex flex-wrap gap-2">
           {['WLS', 'VM', 'Agentic Boost'].map((pill) => (
-            <span key={pill} className="px-2.5 py-1 rounded-lg bg-roi-red/10 border border-roi-red/20 text-roi-red text-xs font-bold">
+            <span key={pill} className="px-2.5 py-1 rounded-lg bg-autonome-blue/10 border border-autonome-blue/20 text-autonome-blue text-xs font-bold">
               {pill}
             </span>
           ))}

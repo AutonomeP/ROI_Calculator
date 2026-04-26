@@ -16,7 +16,7 @@ export default function MetricCard({ label, value, caption, variant = 'white' }:
     <div className={`${cardClass} p-8`}>
       <div className={`text-xs uppercase tracking-widest font-semibold mb-3 flex items-center gap-2 ${theme === 'dark' ? 'text-gray-400' : 'text-roi-text-secondary'}`}>
         {variant === 'orange' && (
-          <div className="w-2 h-2 rounded-full bg-roi-orange animate-pulse" />
+          <div className="w-2 h-2 rounded-full bg-autonome-blue animate-pulse" />
         )}
         {label}
       </div>

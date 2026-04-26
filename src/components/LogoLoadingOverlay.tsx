@@ -39,7 +39,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
       aria-live="polite"
       aria-label="Loading your calculator"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-roi-red/5"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-autonome-blue/5"></div>
 
       <div className="relative flex flex-col items-center justify-center px-4">
         <div className="relative w-48 h-48 md:w-60 md:h-60 lg:w-72 lg:h-72">
@@ -78,7 +78,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
             }}
           >
             <div className={`absolute inset-0 rounded-full blur-3xl ${
-              theme === 'dark' ? 'bg-roi-yellow/25' : 'bg-roi-red/15'
+              theme === 'dark' ? 'bg-autonome-yellow/25' : 'bg-autonome-blue/15'
             }`}></div>
           </motion.div>
         </div>
@@ -97,7 +97,7 @@ export default function LogoLoadingOverlay({ isOpen, onComplete }: LogoLoadingOv
         </motion.div>
 
         <motion.div
-          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-roi-red to-transparent"
+          className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-autonome-blue to-transparent"
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 2.5, ease: "linear" }}

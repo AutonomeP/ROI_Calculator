@@ -34,13 +34,13 @@ export default function FormSection({
         onClick={toggleCollapse}
       >
         <div className="flex items-center gap-3">
-          <div className="w-1 h-8 bg-roi-orange rounded-full"></div>
-          <h3 className={`text-xl font-bold transition-colors ${isCollapsed ? 'text-roi-orange' : theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{title}</h3>
+          <div className="w-1 h-8 bg-autonome-blue rounded-full"></div>
+          <h3 className={`text-xl font-bold transition-colors ${isCollapsed ? 'text-autonome-blue' : theme === 'dark' ? 'text-white' : 'text-roi-text-primary'}`}>{title}</h3>
         </div>
         {collapsible && (
           <button
             type="button"
-            className={`transition-colors p-1 ${theme === 'dark' ? 'text-gray-400 hover:text-roi-orange' : 'text-roi-text-secondary hover:text-roi-orange'}`}
+            className={`transition-colors p-1 ${theme === 'dark' ? 'text-gray-400 hover:text-autonome-blue' : 'text-roi-text-secondary hover:text-autonome-blue'}`}
             aria-label={isCollapsed ? 'Expand section' : 'Collapse section'}
           >
             {isCollapsed ? <ChevronDown size={24} /> : <ChevronUp size={24} />}

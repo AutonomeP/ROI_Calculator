@@ -29,7 +29,7 @@ export default function ComplexitySelector({ value, onChange }: ComplexitySelect
             className={`
               px-4 py-3 rounded-lg text-base font-semibold transition-all duration-200
               ${value === option.value
-                ? 'bg-roi-orange text-white shadow-lg shadow-roi-orange/30'
+                ? 'bg-autonome-blue text-white shadow-lg shadow-autonome-blue/30'
                 : theme === 'dark'
                   ? 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10'
                   : 'bg-gray-100 text-roi-text-secondary hover:bg-gray-200 hover:text-roi-text-primary border border-black/10'

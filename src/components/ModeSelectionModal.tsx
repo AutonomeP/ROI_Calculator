@@ -34,7 +34,7 @@ export default function ModeSelectionModal({ onSelectMode }: ModeSelectionModalP
             </div>
             <button
               onClick={() => onSelectMode('automation')}
-              className="w-full px-8 py-4 bg-roi-orange text-white font-bold text-sm uppercase tracking-wider rounded-xl hover:bg-roi-orange/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:translate-y-[-2px]"
+              className="w-full px-8 py-4 bg-autonome-blue text-white font-bold text-sm uppercase tracking-wider rounded-xl hover:bg-autonome-blue/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:translate-y-[-2px]"
             >
               Use Automation Calculator
             </button>
@@ -51,7 +51,7 @@ export default function ModeSelectionModal({ onSelectMode }: ModeSelectionModalP
             </div>
             <button
               onClick={() => onSelectMode('agentic')}
-              className="w-full px-8 py-4 bg-roi-orange text-white font-bold text-sm uppercase tracking-wider rounded-xl hover:bg-roi-orange/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:translate-y-[-2px]"
+              className="w-full px-8 py-4 bg-autonome-blue text-white font-bold text-sm uppercase tracking-wider rounded-xl hover:bg-autonome-blue/90 transition-all duration-300 shadow-lg hover:shadow-xl hover:translate-y-[-2px]"
             >
               Use Agentic Calculator
             </button>

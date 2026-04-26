@@ -11,8 +11,8 @@ interface SystemCardProps {
 
 const SCENARIOS = [
   { label: 'Conservative', factor: 0.6, color: 'bg-black/35 dark:bg-white/35' },
-  { label: 'Expected', factor: 0.8, color: 'bg-roi-red' },
-  { label: 'Optimistic', factor: 1.0, color: 'bg-roi-yellow' },
+  { label: 'Expected', factor: 0.8, color: 'bg-autonome-blue' },
+  { label: 'Optimistic', factor: 1.0, color: 'bg-autonome-yellow' },
 ];
 
 export function SystemCard({ system, index }: SystemCardProps) {
@@ -39,7 +39,7 @@ Service price: ${formatCurrency(servicePrice)}`;
         className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
       >
         <div className="flex items-center gap-3 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-roi-red/10 border border-roi-red/20 flex items-center justify-center text-roi-red text-sm font-black flex-shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-autonome-blue/10 border border-autonome-blue/20 flex items-center justify-center text-autonome-blue text-sm font-black flex-shrink-0">
             {index + 1}
           </div>
           <div className="min-w-0">
@@ -49,7 +49,7 @@ Service price: ${formatCurrency(servicePrice)}`;
         </div>
         <div className="flex items-center gap-4 flex-shrink-0">
           <div className="text-right hidden sm:block">
-            <div className="text-roi-red font-black text-lg">{formatCurrency(servicePrice)}</div>
+            <div className="text-autonome-blue font-black text-lg">{formatCurrency(servicePrice)}</div>
             <div className={`text-xs ${isDark ? 'text-white/40' : 'text-black/40'}`}>service price</div>
           </div>
           {expanded ? (
@@ -63,7 +63,7 @@ Service price: ${formatCurrency(servicePrice)}`;
       {expanded && (
         <div className={`px-5 pb-5 border-t pt-4 ${isDark ? 'border-white/10' : 'border-black/10'}`}>
           <div className="sm:hidden mb-4">
-            <div className="text-roi-red font-black text-2xl">{formatCurrency(servicePrice)}</div>
+            <div className="text-autonome-blue font-black text-2xl">{formatCurrency(servicePrice)}</div>
             <div className={`text-xs ${isDark ? 'text-white/40' : 'text-black/40'}`}>service price</div>
           </div>
 
