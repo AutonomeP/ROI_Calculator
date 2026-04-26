@@ -36,7 +36,17 @@ export function useChat(): UseChatReturn {
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        // Try to extract the structured error message from the backend
+        let errorMessage = `API error: ${response.status}`;
+        try {
+          const errorData = await response.json();
+          if (errorData.error) {
+            errorMessage = errorData.error;
+          }
+        } catch {
+          // Response wasn't JSON — use the generic status code message
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
